@@ -9,7 +9,7 @@ summarySE <- function(data=NULL,
                       conf.interval=0.95, 
                       drop=TRUE){
   
-  #library(plyr)
+  library(plyr)
   
   # Create new version of length which can handle NA's: if na.rm==T, don't count them
   length2 <- function (x, na.rm=FALSE) {
@@ -19,14 +19,14 @@ summarySE <- function(data=NULL,
   
   # This creates the summary. For each group's data frame, return a vector with
   # N, mean, and sd
-  datac <- plyr:::ddply(data, groupvars, .drop=drop,
-                 .fun = function(xx, col) {
-                   c(N    = length2(xx[[col]], na.rm=na.rm),
-                     mean = mean   (xx[[col]], na.rm=na.rm),
-                     sd   = sd     (xx[[col]], na.rm=na.rm)
-                   )
-                 },
-                 measurevar
+  datac <- plyr::ddply(data, groupvars, .drop=drop,
+                       .fun = function(xx, col) {
+                         c(N    = length2(xx[[col]], na.rm=na.rm),
+                           mean = mean   (xx[[col]], na.rm=na.rm),
+                           sd   = sd     (xx[[col]], na.rm=na.rm)
+                         )
+                       },
+                       measurevar
   )
   
   # Rename the "mean" column    
