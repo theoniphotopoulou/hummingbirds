@@ -1,22 +1,8 @@
-#' ---
-#' title: "Hidden Markov model analysis of hummingbird movement: Experiment 1"
-#' author: "Theoni Photopoulou"
-#' date: "29/04/2019"
-#' output: 
-#'   html_document:
-#'     toc: true
-#' ---
-#' 
-## ----setup, include=FALSE-----------------------------------------------
-knitr::opts_chunk$set(echo = TRUE)
+#' Hidden Markov model analysis of hummingbird movement: Experiment 1
+#' Theoni Photopoulou
+#' 20210818
 
-#' 
-## ---- results="hide", warning=FALSE, echo=FALSE, include=FALSE----------
-#packageurl <- "https://cran.r-project.org/src/contrib/Archive/RcppArmadillo/RcppArmadillo_0.9.900.3.0.tar.gz"
-#install.packages(packageurl, repos=NULL, type="source")
-#devtools::install_github('bmcclintock/momentuHMM@develop')
 
-#' 
 ## ---- results="hide", warning=FALSE, echo=FALSE, include=FALSE----------
 library(momentuHMM)
 library(circular)
@@ -65,9 +51,7 @@ library(here)
 #' Load the data for experiment one
 ## -----------------------------------------------------------------------
 exp1data <- read.csv(here::here("data/processed-data.csv")) %>%
-  select(-stops.1) %>%
-  filter(Exp==1) %>%
-  rename(Flowerx = "flowerx", Flowery = "flowery", Flowerz = "flowerz")
+  filter(Exp==1) 
 
 names(exp1data)
 dim(exp1data)
@@ -77,13 +61,10 @@ range(exp1data$pitch, na.rm=TRUE)
 range(exp1data$yaw, na.rm=TRUE)
 range(exp1data$CurrFlowerDist, na.rm=TRUE)
 table(exp1data$LM)
-table(is.na(exp1data$NearFar))
-table(is.na(exp1data$Site))
 
 exp1data <- exp1data %>%
   mutate(step = step/1000,
-         CurrFlowerDist = CurrFlowerDist/1000) %>%
-  select(-NearFar, -Site)
+         CurrFlowerDist = CurrFlowerDist/1000) 
 
 head(exp1data)
 
@@ -179,9 +160,7 @@ green.col <- "#00C567"
 lime.col <- "#CCFF33"
 yellow.col <- "#FDE725"
 
-#' 
-#' ### Null model: no covariates
-#' 
+
 #' Set up initial values
 ## ---- results="hide"----------------------------------------------------
 mu0 <- c(0.0236,0.1069)  # mean of steps
@@ -237,9 +216,7 @@ Pkappa0 <- c(0.1,0.9339) # concentration of angles, higher number the more conce
 
 PanglePar0 <- c(PangleMean0, Pkappa0)
 
-#' 
-#' Fit null model - 2 states
-## ---- results="hide"----------------------------------------------------
+## -----------------------------------------------------------------------
 mNULL_estPitchMean_exp1_2st <- fitHMM(exp1prep, nbStates=2, 
                 dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
                 Par0 = list(step = getPar(mNULL_exp1_2st)$Par$step, 
@@ -274,8 +251,6 @@ Ykappa0 <- c(0.5987,0.9535) # concentration of angles, higher number the more co
 
 YanglePar0 <- c(YangleMean0, Ykappa0)
 
-#' 
-#' Fit null model - 2 states
 ## -----------------------------------------------------------------------
 mNULL_estYawMean_exp1_2st <- fitHMM(exp1prep, nbStates=2, 
                 dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
@@ -306,8 +281,6 @@ AIC(mNULL_exp1_2st, mNULL_estPitchMean_exp1_2st, mNULL_estYawMean_exp1_2st)
 ## -----------------------------------------------------------------------
 formula <- ~ CurrFlowerDist
 
-#' 
-#' Fit model - 2 states
 ## -----------------------------------------------------------------------
 mFL_2st <- fitHMM(exp1prep, nbStates=2, 
                 dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
@@ -338,8 +311,6 @@ AIC(mNULL_exp1_2st, mNULL_estPitchMean_exp1_2st, mNULL_estYawMean_exp1_2st, mFL_
 ## -----------------------------------------------------------------------
 formula <- ~ CurrFlowerDist
 
-#' 
-#' Fit null model - 2 states
 ## -----------------------------------------------------------------------
 mFL_estMeanPY_2st <- fitHMM(exp1prep, nbStates=2, 
                 dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
@@ -376,8 +347,6 @@ AIC(mNULL_exp1_2st, mNULL_estPitchMean_exp1_2st, mNULL_estYawMean_exp1_2st, mFL_
 ## -----------------------------------------------------------------------
 formula <- ~ state2(CurrFlowerDist)
 
-#' 
-#' Fit null model - 2 states
 ## -----------------------------------------------------------------------
 mFL1_2st <- fitHMM(exp1prep, nbStates=2, 
                 dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
@@ -403,8 +372,6 @@ plotStationary(mFL1_2st, plotCI = TRUE)
 ## -----------------------------------------------------------------------
 formula <- ~ state1(CurrFlowerDist)
 
-#' 
-#' Fit null model - 2 states
 ## -----------------------------------------------------------------------
 mFL2_2st <- fitHMM(exp1prep, nbStates=2, 
                 dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
@@ -422,17 +389,20 @@ plot(mFL2_2st, ask=FALSE, breaks=50, plotCI=TRUE)
 plotStationary(mFL2_2st, plotCI = TRUE)
 
 #' 
-#' ### Compare models so far
+#' ### Compare all models
 ## -----------------------------------------------------------------------
-AIC(mNULL_exp1_2st, mNULL_estPitchMean_exp1_2st, mNULL_estYawMean_exp1_2st, mFL_2st, 
-    mFL_estMeanPY_2st, mFL1_2st, mFL2_2st)
+aic_table <- AIC(mNULL_exp1_2st, mNULL_estPitchMean_exp1_2st, 
+                 mNULL_estYawMean_exp1_2st, mFL_2st, 
+                 mFL_estMeanPY_2st, mFL1_2st, mFL2_2st); aic_table
 
-AICweights(mNULL_exp1_2st, mNULL_estPitchMean_exp1_2st, mNULL_estYawMean_exp1_2st, mFL_2st, 
-           mFL_estMeanPY_2st, mFL1_2st, mFL2_2st)
+aic_weights <- AICweights(mNULL_exp1_2st, mNULL_estPitchMean_exp1_2st, 
+                          mNULL_estYawMean_exp1_2st, mFL_2st, mFL_estMeanPY_2st, 
+                          mFL1_2st, mFL2_2st); aic_weights
 
-aic_weights_exp1 <- AICweights(mNULL_exp1_2st, mNULL_estPitchMean_exp1_2st, 
-                               mNULL_estYawMean_exp1_2st, mFL_2st, mFL_estMeanPY_2st, 
-                               mFL1_2st, mFL2_2st); aic_weights_exp1
+aic_weights_exp1 <- aic_weights %>% 
+                        mutate(AIC=aic_table$AIC) %>%
+                        select(Model, AIC, weight); aic_weights_exp1
+
 #' 
 ## -----------------------------------------------------------------------
 save(aic_weights_exp1, file=here("output","exp1_aic_weights.RData"))
@@ -440,46 +410,50 @@ save(mFL_2st, file=here("output","exp1_best_models.RData"))
 
 #' 
 #' ### Describe best model
-#' The model with current distance to flower as covariate on all transitions is the best one by far
+#' The model with current distance to flower as covariate on all transitions 
+#' is the best one by far
 
 ## -----------------------------------------------------------------------
 print(mFL1_2st)
 plotStationary(mFL1_2st, plotCI=TRUE)
 CIreal(mFL1_2st)
 CIbeta(mFL1_2st)
-mFL1_2st_probs <- stateProbs(mFL1_2st)
-exp1data_preds$mFL1_2st_TravelProbs <- mFL1_2st_probs[,"Travel"]
 
-#' 
-#' Viterbi decoded states
+
+#' Viterbi decoded states (most likely state sequence)  
+#' and State probabilities
 ## -----------------------------------------------------------------------
-# decode most likely state sequence
 exp1_mFL1_2st_states <- viterbi(mFL1_2st)
 exp1data$mFL1_2st <- exp1_mFL1_2st_states
+table(exp1data$mFL1_2st)
+mFL1_2st_probs <- stateProbs(mFL1_2st)
+exp1data$mFL1_2st_TravelProbs <- mFL1_2st_probs[,"Travel"]
+
 
 #' 
 #' Check the model fit
-#' 
 ## -----------------------------------------------------------------------
 zero_step <- which(exp1data$step==0)
 
 pres_mFL1_exp1_2st <- pseudoRes(mFL1_2st)
+
+# step
 qqnorm(pres_mFL1_exp1_2st$stepRes[-zero_step])
 hist(pres_mFL1_exp1_2st$stepRes[-zero_step])
-
+# yaw
 qqnorm(pres_mFL1_exp1_2st$yawRes[-zero_step], ylim=c(-pi,pi))
 hist(pres_mFL1_exp1_2st$yawRes[-zero_step])
-
+# pitch
 qqnorm(pres_mFL1_exp1_2st$pitchRes[-zero_step])
 hist(pres_mFL1_exp1_2st$pitchRes[-zero_step])
 
 #' 
 #' Plot state probabilities for best model
 ## -----------------------------------------------------------------------
-#stateNames
+
 id <- 11
 
-exp1 <- exp1data_preds %>% filter(ID==id, Exp==1) 
+exp1 <- exp1data %>% filter(ID==id, Exp==1) 
 lmcol <- ifelse(unique(exp1$LM) == "Y", "red", "white")
 plot_aspect <- diff(range(exp1$X))/diff(range(exp1$Z))
 flower.lm.size <- 2.5

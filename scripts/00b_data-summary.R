@@ -1,3 +1,8 @@
+# Process trajectory data into stops and summarise
+# David Pritchard
+# 20210818
+
+
 #-----------------------------------------------------------------------
 # Read in processed data
 bird <- read.csv("data/processed-data.csv")

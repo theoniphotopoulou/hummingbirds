@@ -111,7 +111,7 @@ gsV12modInt <- glmer(stepScaled ~ expt*LM + (1|id),
 V12 <- dredge(gsV12modInt)
 
 # Fit average model based on models with AICc delta less than 2
-V12Avg <- model.avg(V12, subset = delta<2)        # WHY ONLY FULL MODE HERE?
+V12Avg <- model.avg(V12, subset = delta<2)        
 # Look at conditional average from summary(V12Avg) 
 
 ##############################

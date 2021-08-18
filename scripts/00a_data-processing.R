@@ -1,6 +1,13 @@
+# Process raw data into trajectories 
+# David Pritchard
+# 20210818
+
+#-----------------------------------------------------------------------
 # Load packages
-require(circular)
-require(CircStats)
+library(circular)
+library(CircStats)
+library(dplyr)
+
 
 #-----------------------------------------------------------------------
 # Read in raw data from file
@@ -17,17 +24,31 @@ noLM <- c(1,3,5,10,11,12,14) # IDs of birds with landmarks removed
 
 #-----------------------------------------------------------------------
 # Make a data.frame of test data only
-testt <- data.frame(cbind(sheet$Expt,
-                          sheet$ID,
-                          rep('NA',times = length(sheet$Expt)),
-                          rep('NA',times = length(sheet$Expt)),
-                          rep('NA',times = length(sheet$Expt)),
-                          rep('Test',times = length(sheet$Expt)),
-                          sheet$Testx,
-                          sheet$Testy,
-                          sheet$Testz))
+testt <- sheet %>%
+  select(Expt, ID, Testx, Testy, Testz,
+         LeftLMx, LeftLMy, LeftLMz, RightLMx, RightLMy, RightLMz,
+         Flowerx, Flowery, Flowerz) %>%
+  mutate(LM=NA,
+         Section=rep('Test', times = nrow(sheet))) %>%
+  rename(X=Testx,
+         Y=Testy,
+         Z=Testz,
+         Exp=Expt) %>%
+  select(Exp, ID, LM, Section, X, Y, Z,
+         LeftLMx, LeftLMy, LeftLMz, RightLMx, RightLMy, RightLMz,
+         Flowerx, Flowery, Flowerz)
 
-names(testt) = c('Exp','ID', 'Site','LM','NearFar', 'Section','X','Y','Z')
+# testt <- data.frame(cbind(sheet$Expt,
+#                           sheet$ID,
+#                           rep('NA',times = length(sheet$Expt)),
+#                           rep('NA',times = length(sheet$Expt)),
+#                           rep('NA',times = length(sheet$Expt)),
+#                           rep('Test',times = length(sheet$Expt)),
+#                           sheet$Testx,
+#                           sheet$Testy,
+#                           sheet$Testz))
+# 
+# names(testt) = c('Exp','ID', 'Site','LM','NearFar', 'Section','X','Y','Z')
 allData <- testt
 allData$X <- as.numeric(as.character(allData$X))
 allData$Y <- as.numeric(as.character(allData$Y))
@@ -51,30 +72,24 @@ source("functions/getVAngle.R")
 # Consolidate across tests into single data.frame
 
 # loop over experiments (1 to 3) 
-for(e in 1:3){
+for(e in 1:3){ # 
   
   currsheet <- allData[which(allData$Exp==e),]
   
-  sheet.col.names <- c('Exp','ID', 'Section', 'LM','NearFar', 'Site', 
-                       'X','Y','Z', 'step', 'yaw', 'pitch', 'CurrFlowerDist')
-  output <- matrix(rep(NA,times=(nrow(currsheet)*length(sheet.col.names))),
-                   nrow=nrow(currsheet), ncol=length(sheet.col.names))
-  # Make an empty data frame
-  output <- as.data.frame(output)
-  names(output) <- sheet.col.names
+  #sheet.col.names <- c('Exp','ID', 'Section', 'LM',
+  #                     'X','Y','Z', 'step', 'yaw', 'pitch', 'CurrFlowerDist')
   
-  # Fill in variables from older sheets
-  output$Exp <- currsheet$Exp           # Experiment
-  output$ID <- currsheet$ID             # Bird ID
-  output$Site <- currsheet$Site         # Location
-  output$Section <- currsheet$Section   # Test
-  output$LM <- currsheet$LM             # Landmark present or not
-  output$NearFar <- currsheet$NearFar   # We did not find an effect of moving near and 
-                                        # far so did not end up using this
-  # Coordinates
-  output$X <- currsheet$X
-  output$Y <- currsheet$Y
-  output$Z <- currsheet$Z  
+  # Make a new data frame and fill in variables 
+  output <- currsheet %>%
+    mutate(step=NA,
+           yaw=NA,
+           pitch=NA,
+           CurrFlowerDist=NA) %>%
+    select(Exp, ID, Section,                 # Experiment, Bird ID, Test, Landmarks present or not
+           LM, X, Y, Z,                      # Bird coordinates
+           step, yaw, pitch, CurrFlowerDist, # New variables to be created below
+           LeftLMx, LeftLMy, LeftLMz, RightLMx, RightLMy, RightLMz, # Landmark coordinates
+           Flowerx, Flowery, Flowerz)        # Flower coordinates 
   
   # loop over individual birds (1 to 14)
   for(i in 1:14){ 
@@ -155,13 +170,13 @@ bird <- bird[which(bird$step < 880),]
 for(e in c(1:3)){
   for(i in unique(bird$ID)){
     
-    flowerx = sheet$Flowerx[which(sheet$Expt==e&sheet$ID==i)][1]
-    flowery = sheet$Flowery[which(sheet$Expt==e&sheet$ID==i)][1]
-    flowerz = sheet$Flowerz[which(sheet$Expt==e&sheet$ID==i)][1]
+    flowerx = sheet$Flowerx[which(sheet$Expt==e & sheet$ID==i)][1]
+    flowery = sheet$Flowery[which(sheet$Expt==e & sheet$ID==i)][1]
+    flowerz = sheet$Flowerz[which(sheet$Expt==e & sheet$ID==i)][1]
     
-    bird$CurrFlowerDist[which(bird$Exp==e & bird$ID==i)] <- sqrt((bird$X[which(bird$Exp==e&bird$ID==i)] - flowerx)^2 + 
-                                                                 (bird$Y[which(bird$Exp==e&bird$ID==i)] - flowery)^2 + 
-                                                                 (bird$Z[which(bird$Exp==e&bird$ID==i)] - flowerz)^2)
+    bird$CurrFlowerDist[which(bird$Exp==e & bird$ID==i)] <- sqrt((bird$X[which(bird$Exp==e & bird$ID==i)] - flowerx)^2 + 
+                                                                 (bird$Y[which(bird$Exp==e & bird$ID==i)] - flowery)^2 + 
+                                                                 (bird$Z[which(bird$Exp==e & bird$ID==i)] - flowerz)^2)
   }
 }
 
@@ -185,6 +200,9 @@ bird$LM[which(bird$Section=='Test' & bird$ID %in% LM)] <- "Y"
 
 bird$LM[which(bird$Section=='Test' & bird$Exp==1)] <- "Y"
 
+
+#-----------------------------------------------------------------------
+# Tidy up
 # remove other used sheets
 rm(allData,currsheet,testt,sheet) 
 

@@ -1,22 +1,8 @@
-#' ---
-#' title: "Hidden Markov model analysis of hummingbird movement: Experiment 3"
-#' author: "Theoni Photopoulou"
-#' date: "10/12/2018"
-#' output: 
-#'   html_document:
-#'     toc: true
-#' ---
-#' 
-## ----setup, include=FALSE-----------------------------------------------
-knitr::opts_chunk$set(echo = TRUE)
+#' Hidden Markov model analysis of hummingbird movement: Experiment 3
+#' Theoni Photopoulou
+#' 20210818
 
-#' 
-## ---- results="hide", warning=FALSE, echo=FALSE, include=FALSE----------
-#packageurl <- "https://cran.r-project.org/src/contrib/Archive/RcppArmadillo/RcppArmadillo_0.9.900.3.0.tar.gz"
-#install.packages(packageurl, repos=NULL, type="source")
-#devtools::install_github('bmcclintock/momentuHMM@develop')
 
-#' 
 ## ---- results="hide", warning=FALSE, echo=FALSE, include=FALSE----------
 library(momentuHMM)
 library(circular)
@@ -60,27 +46,23 @@ library(here)
 #' 6. current distance to flower as a covariate on transitions out of state 2 only, 
 #'    no estimation of mean pitch and yaw (mFL1_2st)
 #' 7. current distance to flower and presence of landmarks as covariates on transitions 
-#'    out of state 2 only, no estimation of mean pitch and yaw (mFL2_2st)
+#'    out of state 2 (mFL2_2st)
 #' 8. presence of landmarks as a covariate on the state-dependent step mean (mFL3_2st)
 #' 9. current distance to flower on transitions from state 2, presence of landmarks as a 
 #'    covariate on the state-dependent step mean (mFL4_2st)
 #' 10. current distance to flower on all transitions, presence of landmarks as a 
 #'    covariate on the state-dependent step mean (mFL5_2st)
 #' 11. current distance to flower and the presence of landmarks as covariates on 
-#'    transitions from state 2 (mFL6_2st)
+#'    all transitions (mFL6_2st)
 #' 12. current distance to flower and the presence of landmarks as covariates on all 
 #'    transitions (mFL7_2st)
 #' 13. current distance to flower and presence of landmarks as interacting covariates 
 #'    on transitions out of state 2 only (mFL8_2st)
-#' 14. current distance to flower and presence of landmarks as interacting covariates 
-#'    on all transitions (mFL9_2st)
 #' 
 #' Load the data for experiment three
 ## -----------------------------------------------------------------------
 exp3data <- read.csv(here::here("data/processed-data.csv")) %>%
-  select(-stops.1) %>%
-  filter(Exp==3) %>%
-  rename(Flowerx = "flowerx", Flowery = "flowery", Flowerz = "flowerz")
+  filter(Exp==3) 
 
 names(exp3data)
 dim(exp3data)
@@ -90,14 +72,11 @@ range(exp3data$pitch, na.rm=TRUE)
 range(exp3data$yaw, na.rm=TRUE)
 range(exp3data$CurrFlowerDist, na.rm=TRUE)
 table(exp3data$LM)
-table(is.na(exp3data$NearFar))
-table(is.na(exp3data$Site))
 
 exp3data <- exp3data %>%
   mutate(step = step/1000,
          CurrFlowerDist = CurrFlowerDist/1000,
-         LM = factor(LM, levels=c("Y","N"))) %>%
-  select(-NearFar, -Site)
+         LM = factor(LM, levels=c("Y","N")))
 
 head(exp3data)
 
@@ -193,10 +172,7 @@ green.col <- "#00C567"
 lime.col <- "#CCFF33"
 yellow.col <- "#FDE725"
 
-#' 
-#' ### Null model: no covariates
-#' Fit a 2-state model without any covariates 
-#' 
+
 #' Set up initial values
 ## -----------------------------------------------------------------------
 mu0 <- c(0.0236,0.1069)  # mean of steps
@@ -251,9 +227,7 @@ Pkappa0 <- c(0.1,0.9339) # concentration of angles, higher number the more conce
 
 PanglePar0 <- c(PangleMean0, Pkappa0)
 
-#' 
-#' Fit null model - 2 states
-## ---- results="hide"----------------------------------------------------
+## -----------------------------------------------------------------------
 mNULL_estPitchMean_exp3_2st <- fitHMM(exp3prep, nbStates=2, 
                                       dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
                                       Par0 = list(step = getPar(mNULL_exp3_2st)$Par$step, 
@@ -276,7 +250,8 @@ AIC(mNULL_exp3_2st, mNULL_estPitchMean_exp3_2st)
 #' The AIC suggests that it's not worth estimating the mean of the pitch.
 #' 
 #' ### Null model: no covariates, estimate mean yaw
-#' Fit a 2-state model without any covariates, while estimating the angle mean for yaw (left - right) 
+#' Fit a 2-state model without any covariates, while estimating the angle 
+#' mean for yaw (left - right) 
 #' 
 #' Set up initial values
 ## -----------------------------------------------------------------------
@@ -287,8 +262,6 @@ Ykappa0 <- c(0.5987,0.9535) # concentration of angles, higher number the more co
 
 YanglePar0 <- c(YangleMean0, Ykappa0)
 
-#' 
-#' Fit null model - 2 states
 ## -----------------------------------------------------------------------
 mNULL_estYawMean_exp3_2st <- fitHMM(exp3prep, nbStates=2, 
                                     dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
@@ -318,8 +291,6 @@ AIC(mNULL_exp3_2st, mNULL_estPitchMean_exp3_2st, mNULL_estYawMean_exp3_2st)
 ## -----------------------------------------------------------------------
 formula <- ~ CurrFlowerDist
 
-#' 
-#' Fit model - 2 states
 ## -----------------------------------------------------------------------
 mFL_2st <- fitHMM(exp3prep, nbStates=2, 
                   dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
@@ -350,8 +321,6 @@ AIC(mNULL_exp3_2st, mNULL_estPitchMean_exp3_2st, mNULL_estYawMean_exp3_2st, mFL_
 ## -----------------------------------------------------------------------
 formula <- ~ CurrFlowerDist
 
-#' 
-#' Fit null model - 2 states
 ## -----------------------------------------------------------------------
 mFL_estMeanPY_2st <- fitHMM(exp3prep, nbStates=2, 
                             dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
@@ -376,18 +345,18 @@ AIC(mNULL_exp3_2st, mNULL_estPitchMean_exp3_2st, mNULL_estYawMean_exp3_2st, mFL_
     mFL_estMeanPY_2st)
 
 #' 
-#' The model with distance to flower as a covariate on the transition probabilities but 
-#' without estimating the mean pitch and yaw, does much better according to the AIC.
+#' The model with distance to flower as a covariate on the transition 
+#' probabilities but without estimating the mean pitch and yaw, does 
+#' much better according to the AIC.
 #' 
 #' ### Distance to flower on transitions from state 2
-#' Fit a 2-state model with distance to flower as a covariate transitions from state 2 only
+#' Fit a 2-state model with distance to flower as a covariate transitions 
+#' from state 2 only
 #' 
 #' Specify formula for the effect of covariates on the transition probabilities
 ## -----------------------------------------------------------------------
 formula <- ~ state2(CurrFlowerDist)
 
-#' 
-#' Fit null model - 2 states
 ## -----------------------------------------------------------------------
 mFL1_2st <- fitHMM(exp3prep, nbStates=2, 
                    dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
@@ -412,14 +381,13 @@ AIC(mNULL_exp3_2st, mNULL_estPitchMean_exp3_2st, mNULL_estYawMean_exp3_2st, mFL_
 
 #' 
 #' ### Distance to flower and landmarks on transitions from state 2
-#' Fit a 2-state model with distance to flower and landmarks as covariates on transitions from state 2
+#' Fit a 2-state model with distance to flower and landmarks as covariates 
+#' on transitions from state 2
 #' 
 #' Specify formula for the effect of covariates on the transition probabilities
 ## -----------------------------------------------------------------------
 formula <- ~ state2(CurrFlowerDist + LM)
 
-#' 
-#' Fit model - 2 states
 ## -----------------------------------------------------------------------
 mFL2_2st <- fitHMM(exp3prep, nbStates=2, 
                 dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
@@ -463,8 +431,6 @@ exp(yawLM.conc)
 pitchLM.conc <- c(0.4, 0.9) 
 exp(pitchLM.conc)
 
-#' 
-#' Fit model - 2 states
 ## -----------------------------------------------------------------------
 mFL3_2st <- fitHMM(exp3prep, nbStates=2, 
                 dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
@@ -495,8 +461,6 @@ AIC(mNULL_exp3_2st, mNULL_estPitchMean_exp3_2st, mNULL_estYawMean_exp3_2st, mFL_
 ## -----------------------------------------------------------------------
 formula <- ~ state2(CurrFlowerDist)
 
-#' 
-#' Fit model - 2 states
 ## -----------------------------------------------------------------------
 mFL4_2st <- fitHMM(exp3prep, nbStates=2, 
                 dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
@@ -531,8 +495,6 @@ AIC(mNULL_exp3_2st, mNULL_estPitchMean_exp3_2st, mNULL_estYawMean_exp3_2st, mFL_
 ## -----------------------------------------------------------------------
 formula <- ~ CurrFlowerDist 
 
-#' 
-#' Fit model - 2 states
 ## -----------------------------------------------------------------------
 mFL5_2st <- fitHMM(exp3prep, nbStates=2,
                 dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'),
@@ -558,16 +520,14 @@ AIC(mNULL_exp3_2st, mNULL_estPitchMean_exp3_2st, mNULL_estYawMean_exp3_2st, mFL_
     mFL_estMeanPY_2st, mFL1_2st, mFL2_2st, mFL3_2st, mFL4_2st, mFL5_2st)
 
 #' 
-#' ### Distance to flower and landmarks on transitions from state 2
-#' Fit a 2-state model with distance to flower and the presence of landmarks 
-#' as covariates on transitions from state 2.
+#' ### Distance to flower and landmarks on all transitions 
+#' Fit a 2-state model with distance to flower and the presence of landmarks as 
+#' covariates on all transitions
 #' 
 #' Specify formula for the effect of covariates on the transition probabilities
 ## ---- results="hide"----------------------------------------------------
-formula <- ~ state2(CurrFlowerDist + LM)
+formula <- ~ CurrFlowerDist + LM
 
-#' 
-#' Fit model - 2 states
 ## -----------------------------------------------------------------------
 mFL6_2st <- fitHMM(exp3prep, nbStates=2, 
                 dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
@@ -591,16 +551,14 @@ AIC(mNULL_exp3_2st, mNULL_estPitchMean_exp3_2st, mNULL_estYawMean_exp3_2st, mFL_
     mFL_estMeanPY_2st, mFL1_2st, mFL2_2st, mFL3_2st, mFL4_2st, mFL5_2st, mFL6_2st)
 
 #' 
-#' ### Distance to flower and landmarks on all transitions 
-#' Fit a 2-state model with distance to flower and the presence of landmarks as 
-#' covariates on all transitions
+#' ### Distance to flower interacting with landmarks on transitions from state 2
+#' Fit a 2-state model with distance to flower interacting with the presence of 
+#' landmarks as covariates on transitions from state 2
 #' 
 #' Specify formula for the effect of covariates on the transition probabilities
 ## ---- results="hide"----------------------------------------------------
-formula <- ~ CurrFlowerDist + LM
+formula <- ~ state2(CurrFlowerDist * LM)
 
-#' 
-#' Fit model - 2 states
 ## -----------------------------------------------------------------------
 mFL7_2st <- fitHMM(exp3prep, nbStates=2, 
                 dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
@@ -624,17 +582,14 @@ AIC(mNULL_exp3_2st, mNULL_estPitchMean_exp3_2st, mNULL_estYawMean_exp3_2st, mFL_
     mFL_estMeanPY_2st, mFL1_2st, mFL2_2st, mFL3_2st, mFL4_2st, mFL5_2st, mFL6_2st, mFL7_2st)
 
 #' 
-#' 
-#' ### Distance to flower interacting with landmarks on transitions from state 2
-#' Fit a 2-state model with distance to flower interacting with the presence of 
-#' landmarks as covariates on transitions from state 2
+#' ### Distance to flower interacting with landmarks on all transitions
+#' Fit a 2-state model with distance to flower interacting with the 
+#' presence of landmarks as covariates on all transitions.
 #' 
 #' Specify formula for the effect of covariates on the transition probabilities
 ## -----------------------------------------------------------------------
-formula <- ~ state2(CurrFlowerDist * LM)
+formula <- ~ CurrFlowerDist * LM
 
-#' 
-#' Fit model - 2 states
 ## -----------------------------------------------------------------------
 mFL8_2st <- fitHMM(exp3prep, nbStates=2, 
                 dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
@@ -652,55 +607,33 @@ plot(mFL8_2st, ask=FALSE, breaks=50, plotCI=TRUE)
 plotStationary(mFL8_2st, plotCI=TRUE)
 
 #' 
-#' Compare models again
-## -----------------------------------------------------------------------
-AIC(mNULL_exp3_2st, mNULL_estPitchMean_exp3_2st, mNULL_estYawMean_exp3_2st, mFL_2st, 
-    mFL_estMeanPY_2st, mFL1_2st, mFL2_2st, mFL3_2st, mFL4_2st, mFL5_2st, mFL6_2st, mFL7_2st,
-    mFL8_2st)
-
-#' 
-#' ### Distance to flower interacting with landmarks on all transitions
-#' Fit a 2-state model with distance to flower interacting with the presence of landmarks as covariates on all transitions.
-#' 
-#' Specify formula for the effect of covariates on the transition probabilities
-## -----------------------------------------------------------------------
-formula <- ~ CurrFlowerDist * LM
-
-#' 
-#' Fit model - 2 states
-## -----------------------------------------------------------------------
-mFL9_2st <- fitHMM(exp3prep, nbStates=2, 
-                dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
-                Par0 = list(step = getPar(mFL_2st)$Par$step, 
-                            yaw = getPar(mFL_2st)$Par$yaw, 
-                            pitch = getPar(mFL_2st)$Par$pitch), 
-                formula = formula,
-                stateNames = stateNames)
-
-## -----------------------------------------------------------------------
-print(mFL9_2st)
-mFL9_2st$mod$minimum
-mFL9_2st$mod$code
-plot(mFL9_2st, ask=FALSE, breaks=50, plotCI=TRUE)
-plotStationary(mFL9_2st, plotCI=TRUE)
-
-#' 
 #' ### Compare all models 
 ## -----------------------------------------------------------------------
-AIC(mNULL_exp3_2st, mNULL_estPitchMean_exp3_2st, mNULL_estYawMean_exp3_2st, mFL_2st, 
-    mFL_estMeanPY_2st, mFL1_2st, mFL2_2st, mFL3_2st, 
-    mFL4_2st, mFL5_2st, mFL6_2st, 
-    mFL7_2st, mFL8_2st, mFL9_2st)
+aic_table <- AIC(mNULL_exp3_2st, mNULL_estPitchMean_exp3_2st, 
+                 mNULL_estYawMean_exp3_2st, mFL_2st, 
+                 mFL_estMeanPY_2st, mFL1_2st, mFL2_2st, mFL3_2st, 
+                 mFL4_2st, mFL5_2st, mFL6_2st, 
+                 mFL7_2st, mFL8_2st); aic_table 
 
-aic_weights_exp3 <- AICweights(mNULL_exp3_2st, mNULL_estPitchMean_exp3_2st, 
-    mNULL_estYawMean_exp3_2st, mFL_2st, 
-    mFL_estMeanPY_2st, mFL1_2st, mFL2_2st, mFL3_2st, 
-    mFL4_2st, mFL5_2st, mFL6_2st, 
-    mFL7_2st, mFL8_2st, mFL9_2st); aic_weights_exp3
+aic_weights <- AICweights(mNULL_exp3_2st, mNULL_estPitchMean_exp3_2st, 
+                          mNULL_estYawMean_exp3_2st, mFL_2st, 
+                          mFL_estMeanPY_2st, mFL1_2st, mFL2_2st, mFL3_2st, 
+                          mFL4_2st, mFL5_2st, mFL6_2st, 
+                          mFL7_2st, mFL8_2st); aic_weights
+
+aic_weights_exp3 <- aic_weights %>% 
+                        mutate(AIC=aic_table$AIC) %>%
+                        select(Model, AIC, weight); aic_weights_exp3 
 
 #' 
 #' ### Describe best model 
-#' The model with landmarks on the mean of the step length distribution and current flower distance affecting all transitions has the most support (71%). Two other models have some support: the model with landmarks and distance as interacting covariates on all transitions (13%) and model with landmarks on the mean of the step length distribution and current flower distance affecting only transitions out of state 2 (12%) which is essentially the same as the best model.
+#' The model with landmarks on the mean of the step length distribution and 
+#' current flower distance affecting all transitions has the most support (82%). 
+#' Two other models have some support: the model with landmarks on the mean 
+#' of the step length distribution and current flower distance affecting 
+#' affecting only transitions out of state 2 (14%) and the model with landmarks 
+#' on the mean of the step length distribution and no covariates on the 
+#' transition probabilities (4%).
 #' 
 ## -----------------------------------------------------------------------
 save(aic_weights_exp3, file=here("output","exp3_aic_weights.RData"))
@@ -714,36 +647,42 @@ covs <- data.frame(LM="N")
 plotStationary(mFL5_2st, plotCI=TRUE, covs=covs)
 CIreal(mFL5_2st)
 mFL5_CIbeta <- CIbeta(mFL5_2st)
-mFL5_2st_probs <- stateProbs(mFL5_2st)
-exp3data_preds$mFL5_2st_TravelProbs <- mFL5_2st_probs[,"Travel"]
 
-#' 
-#' Viterbi decoded states
+#' Viterbi decoded states (most likely state sequence)  
+#' and State probabilities
 ## -----------------------------------------------------------------------
 # decode most likely state sequence
 exp3_mFL5_2st_states <- viterbi(mFL5_2st)
 exp3data$mFL5_2st <- exp3_mFL5_2st_states
+table(exp3data$mFL5_2st)
+mFL5_2st_probs <- stateProbs(mFL5_2st)
+exp3data$mFL5_2st_TravelProbs <- mFL5_2st_probs[,"Travel"]
+
 
 #' 
 #' Check the model fit
 ## -----------------------------------------------------------------------
+zero_step <- which(exp3data$step==0)
+
 pres_mFL5_exp3_2st <- pseudoRes(mFL5_2st)
-qqnorm(pres_mFL5_exp3_2st$stepRes)
-hist(pres_mFL5_exp3_2st$stepRes)
 
-qqnorm(pres_mFL5_exp3_2st$yawRes, ylim=c(-pi,pi))
-hist(pres_mFL5_exp3_2st$yawRes)
-
-qqnorm(pres_mFL5_exp3_2st$pitchRes)
-hist(pres_mFL5_exp3_2st$pitchRes)
+# step
+qqnorm(pres_mFL5_exp3_2st$stepRes[-zero_step])
+hist(pres_mFL5_exp3_2st$stepRes[-zero_step])
+# yaw
+qqnorm(pres_mFL5_exp3_2st$yawRes[-zero_step], ylim=c(-pi,pi))
+hist(pres_mFL5_exp3_2st$yawRes[-zero_step])
+# pitch
+qqnorm(pres_mFL5_exp3_2st$pitchRes[-zero_step])
+hist(pres_mFL5_exp3_2st$pitchRes[-zero_step])
 
 #' 
 #' Plot state probabilities for best model
 ## -----------------------------------------------------------------------
-stateNames
+
 id <- 8
 
-exp3 <- exp3data_preds %>% filter(ID==id, Exp==3) 
+exp3 <- exp3data %>% filter(ID==id, Exp==3) 
 lmcol <- ifelse(unique(exp3$LM) == "Y", "red", "white")
 lmsymb <- ifelse(unique(exp3$LM) == "Y", "square", "square-open")
 plot_aspect <- diff(range(exp3$X))/diff(range(exp3$Z))

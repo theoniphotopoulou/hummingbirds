@@ -1,4 +1,5 @@
 ######## PROCESSING OF STOPS ######## 
+# This is for comparison between experiments
 # David Pritchard, August 2021
 
 # Load packages
@@ -57,20 +58,32 @@ Dur <- c() # Duration of stop
 
 for(e in c(1:3)){ # e loops over experiments 1 to 3
   for(i in unique(bird$ID[which(bird$Exp==e & bird$Section=='Test')])){ # cycle through birds
-    stops <- bird$ID==i & bird$Exp==e & bird$Section=='Test' & bird$step<10 # get TRUE/FALSE if data in test where moved less than 1cm
-    aa <- rle(stops) # run-length encoding to identify continuous runs of TRUE (step<1cm) or FALSE (step>1cm)
-    ind <- c(1, lag(cumsum(aa$lengths))[-1] + 1) # start indexes of runs
-    start <- ind[which(aa$values=='TRUE')] # start indexes of TRUE values (i.e. stops)
-    Dur <- append(Dur,aa$lengths[which(aa$values=='TRUE')]/25) # use length of TRUE runs to extract duration.
+    
+    # get TRUE/FALSE if data in test where moved less than 1cm
+    stops <- bird$ID==i & bird$Exp==e & bird$Section=='Test' & bird$step<10 
+    # run-length encoding to identify continuous runs of TRUE (step<1cm) or FALSE (step>1cm)
+    aa <- rle(stops) 
+    # start indexes of runs
+    ind <- c(1, lag(cumsum(aa$lengths))[-1] + 1)
+    # start indexes of TRUE values (i.e. stops)
+    start <- ind[which(aa$values=='TRUE')] 
+    # use length of TRUE runs to extract duration
+    Dur <- append(Dur,aa$lengths[which(aa$values=='TRUE')]/25) 
+    
     x <- bird$X[start] # X coordinates of stops
     y <- bird$Y[start] # Y coordinates of stops
     z <- bird$Z[start] # Z coordinates of stops
-    dist <- bird$CurrFlowerDist[start] # distance of stops from flower location
-    id <- append(id,rep(i,times = length(start))) # get ID
-    expt <- append(expt,rep(e,times = length(start))) # get Experiment
+    
+    # distance of stops from flower location
+    dist <- bird$CurrFlowerDist[start] 
+    # get ID
+    id <- append(id,rep(i,times = length(start))) 
+    # get Experiment
+    expt <- append(expt,rep(e,times = length(start)))
+    # get Landmark code (in processed data sheet)
     LM <- append(LM,
                  rep(head(bird$LM[which(bird$ID==i & bird$Exp==e & bird$Section=='Test')],n=1),
-                     times = length(start))) # get Landmark code (in processed data sheet)
+                     times = length(start))) 
     
     # add to vectors
     X <- append(X,x)
@@ -349,25 +362,25 @@ exp1data <- bird[which(bird$Exp==1),]
 exp2data <- bird[which(bird$Exp==2),]
 exp3data <- bird[which(bird$Exp==3),]
 
-# Path for landmarks present group
+  # Path for landmarks present group
 ALM1 <- exp1data$CurrFlowerDist[which(exp1data$Exp==1 & exp1data$ID %in% 
                                         unique(exp2data$ID[which(exp2data$Exp==2 & exp2data$LM=='Y')]))]
 ALM2 <- exp2data$CurrFlowerDist[which(exp2data$LM=='Y' & exp2data$Exp==2)]
 ALM3 <- exp3data$CurrFlowerDist[which(exp3data$LM=='Y' & exp3data$Exp==3)]
 
-# Stops for landmarks present group
+  # Stops for landmarks present group
 LM1 <- stops$Dist[which(stops$LM=='Y' & stops$expt==1 & stops$id %in% 
                           unique(stops$id[which(stops$expt==2 & stops$LM=='Y')]))]
 LM2 <- stops$Dist[which(stops$LM=='Y' & stops$expt==2)]
 LM3 <- stops$Dist[which(stops$LM=='Y' & stops$expt==3)]
 
-# Path for landmarks removed group
+  # Path for landmarks removed group
 AnLM1 <- exp1data$CurrFlowerDist[which(exp1data$Exp==1 & exp1data$ID %in% 
                                          unique(exp2data$ID[which(exp2data$Exp==2 & exp2data$LM=='N')]))]
 AnLM2 <- exp2data$CurrFlowerDist[which(exp2data$LM=='N' & exp2data$Exp==2)]
 AnLM3 <- exp3data$CurrFlowerDist[which(exp3data$LM=='N' & exp3data$Exp==3)]
 
-# Stops for landmarks removed group
+  # Stops for landmarks removed group
 noLM1 <- stops$Dist[which(stops$LM=='Y' & stops$expt==1 & stops$id %in% 
                             unique(stops$id[which(stops$expt==2 & stops$LM=='N')]))]
 noLM2 <- stops$Dist[which(stops$LM=='N' & stops$expt==2)]
@@ -375,13 +388,13 @@ noLM3 <- stops$Dist[which(stops$LM=='N' & stops$expt==3)]
 
 # Make data frames of between-landmarks distances for each experiment and landmarks group
 
-# Landmarks removed
+  # Landmarks removed
 nodLM1 <- stopVector$stepl[which(stopVector$LM=='Y' & stopVector$expt==1 & stopVector$id %in% 
                                    unique(stopVector$id[which(stopVector$expt==2 & stopVector$LM=='N')]))]
 nodLM2 <- stopVector$stepl[which(stopVector$LM=='N' & stopVector$expt==2)]
 nodLM3 <- stopVector$stepl[which(stopVector$LM=='N' & stopVector$expt==3)]
 
-# Landmarks present
+  # Landmarks present
 dLM1 <- stopVector$stepl[which(stopVector$LM=='Y' & stopVector$expt==1 & stopVector$id %in% 
                                  unique(stopVector$id[which(stopVector$expt==2 & stopVector$LM=='Y')]))]
 dLM2 <- stopVector$stepl[which(stopVector$LM=='Y' & stopVector$expt==2)]

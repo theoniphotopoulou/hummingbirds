@@ -104,7 +104,7 @@ dens.plot <- ggplot(dist.df,
         #axis.title.y = element_blank(),
         strip.text.x = element_blank(),
         strip.text.y = element_blank(),
-        legend.position = "none")
+        legend.position = "none"); dens.plot
 
 
 ##############################

@@ -1,20 +1,7 @@
-
-#' ---
-#' title: "exp1 model results"
-#' author: "Theoni Photopoulou"
-#' date: ""
-#' output:
-#'  html_document:
-#'    toc: yes
-#' #   toc_float:
-#' #       toc_collapsed: true
-#' #    toc_depth: 3
-#' ---
-#' 
-#' 
-
 #' Plot the results of the best fitting models for experiment 1
-#' using models fitted in exp1_hummingbird_hmm.Rst
+#' using models 
+#' Theoni Photopoulou
+#' 20210818
 
 #' There are two models that have some support according to the weighted AIC score. 
 #' The model with model support includes current distance to flower 
