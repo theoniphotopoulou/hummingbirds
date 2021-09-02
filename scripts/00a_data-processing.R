@@ -185,8 +185,8 @@ for(e in c(1:3)){
 # Add stops
 
 stops <- rep(NA,times = nrow(bird))
-stops[which(bird$step<0.005)] <- 'Y'
-stops[which(bird$step>=0.005)] <- 'N'
+stops[which(bird$step<5)] <- 'Y'
+stops[which(bird$step>=5)] <- 'N'
 stops <- factor(stops)
 bird <- cbind(bird,stops)
 

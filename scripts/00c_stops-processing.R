@@ -412,6 +412,7 @@ save(summary12, summary23,
      noLM1, noLM2, noLM3,
      dLM1, dLM2, dLM3,
      nodLM1, nodLM2, nodLM3,
+     stopNum,
      file = "data/processed-stops.RData")
 
 

@@ -4,6 +4,7 @@
 # Load packages
 
 library(gridExtra) # arranging plots
+library(grid) # arranging plots
 library(circular) # circular data functions
 library(CircStats) # circular statistics functions
 library(lme4) # linear mixed models
@@ -142,7 +143,7 @@ gg <- bird23 %>%
             measurevar = 'CurrFlowerDist',
             groupvars = c('LM','Exp','ID')) %>% filter(Exp==3)
 
-remove.packages(plyr)
+#remove.packages(plyr)
 
 # Bind to make data frames with means distances/trial for all three experiments
 aa <- rbind(bb,ee) # stops
@@ -185,7 +186,7 @@ stops.boxplot <- ggplot(ff) +
   geom_boxplot(aes(x=row, y=Dist, colour = LM, fill = comp),
                position=position_dodge(0.6), width = 0.5) +
   ylim(0,xmax) +
-  ylab("Distance from flower (m)") +
+  ylab("") + #ylab("Distance from flower (m)") +
   scale_fill_manual(values=c('white',
                              alpha(mycols[1], alpha=alpha.trans),
                              'white',
@@ -193,7 +194,7 @@ stops.boxplot <- ggplot(ff) +
   )) +
   scale_color_manual(values = c(mycols)) +
   theme(panel.background = element_rect(fill = "white"),
-        #axis.text.x = element_blank(),
+        axis.text.x = element_blank(),
         axis.text.y = element_blank(),
         #axis.title.x = element_blank(),
         axis.title.y = element_blank(),
@@ -204,7 +205,7 @@ stops.boxplot <- ggplot(ff) +
         strip.text.x = element_blank(),
         strip.text.y = element_blank(),
         legend.position = "none",
-        plot.margin = unit(c(t = 0.3, r = 0.4, b = 0.3, l = 1.8), "cm")) +
+        plot.margin = unit(c(t = 0, r = 0.3, b = 0.6, l = 1.9), "cm")) +
   facet_grid(~ expt) +
   coord_flip(); stops.boxplot
 
@@ -266,7 +267,7 @@ closest.boxplot <- ggplot(kk) +
   geom_boxplot(aes(x=row, y=Dist, colour = LM, fill = comp),
                position=position_dodge(0.6), width = 0.5) +
   ylim(0,xmax) +
-  ylab("Distance from flower (m)") +
+  ylab("") + #ylab("Distance from flower (m)") +
   scale_fill_manual(values=c('white',
                              alpha(mycols[1], alpha=alpha.trans),
                              'white',
@@ -285,9 +286,31 @@ closest.boxplot <- ggplot(kk) +
         strip.text.x = element_blank(),
         strip.text.y = element_blank(),
         legend.position = "none",
-        plot.margin = unit(c(t = 0.3, r = 0.4, b = 0.3, l = 1.8), "cm")) +
+        plot.margin = unit(c(t = -1, r = 0.3, b = 1.6, l = 1.9), "cm")) +
   facet_grid(~ expt) +
   coord_flip(); closest.boxplot
+
+## combine plots into composite
+
+lay <- rbind(c(1,1,1),
+             c(1,1,1),
+             c(2,2,2),
+             c(3,3,3))
+
+comp_plot <- grid.arrange(dens.plot,
+                          stops.boxplot,
+                          closest.boxplot,
+                          layout_matrix=lay)
+
+# create common x and y labels
+x.lab <- textGrob("Distance from flower (m)",
+                  gp=gpar(fontsize=20), x=0.54, y=3.2)
+
+comp_stops_plot <- grid.arrange(arrangeGrob(comp_plot), bottom=x.lab)                          
+
+ggsave(filename=here::here("figures","comp_stops_plot.jpg"),
+       plot=comp_stops_plot,
+       width=35, height=30, units="cm",dpi=700)
 
 
 #######
@@ -306,64 +329,106 @@ ll <- summarySE(data = stopNum,
                 measurevar = 'X',
                 groupvars = c('expt','LM','id')) 
 
-# Plot with experiment on X, number of stops on the Y, and landmark groups 
-# as different colours (Y = blue, N = red)
+# Plot with experiment on x, distance on y, and landmarks groups 
+# as colours: 
+# (Y = red, N = yellow)
+
 nstops.boxplot <- ggplot(ll) +
-  geom_boxplot(aes(factor(expt),X, col = LM, fill= LM),
+  theme_bw(base_size = 18) +
+  geom_boxplot(aes(factor(expt), X, col = LM, fill= LM),
                position=position_dodge(0.6), width = 0.5) +
-  theme(legend.position = 'none')+
-  theme(axis.line = element_line(size = 1), panel.background = element_rect(fill = "white"))+
-  scale_fill_manual(values=c('lightcoral','steelblue2'))+
-  scale_color_manual(values = c('red','blue'))+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())+
-  theme(legend.title = element_blank())
+  ylab("Number of stops") +
+  xlab("") +
+  scale_fill_manual(values=c(alpha(mycols[1], alpha=alpha.trans),
+                             alpha(mycols[2], alpha=alpha.trans))) +
+  scale_color_manual(values = c(mycols)) +
+  scale_x_discrete(breaks=c(1,2,3), labels=c("Exp 1","Exp 2","Exp 3")) + 
+  theme(panel.background = element_rect(fill = "white"),
+        axis.ticks.x = element_blank(),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        legend.position = "none",
+        plot.margin = 
+          unit(c(t = 0.3, r = 0.3, b = -0.3, l = 0.3), "cm")); nstops.boxplot
 
 ## Plot distances between stops
 
 #use summarySE to get means per bird so each bird contributes once to boxplot
-bb = summarySE(data = stopsV12NA,measurevar = 'stepl',groupvars = c('LM','expt','id')) #experiments 1 & 2
-cc = summarySE(data = stopsV23NA,measurevar = 'stepl',groupvars = c('LM','expt','id')) #experiment 3
-cc = cc %>% filter(expt==3)
-bb = rbind(bb,cc)#combine so have all experiments
+mm <- summarySE(data = stopsV12NA, measurevar = 'stepl',
+                groupvars = c('LM','expt','id')) # experiments 1 & 2
+nn <- summarySE(data = stopsV23NA, measurevar = 'stepl',
+                groupvars = c('LM','expt','id')) # experiment 3
+nn <- nn %>% filter(expt==3)
+oo <- rbind(mm,nn) # combine so have all experiments
 
-#check experiment and landmark group are factors
-bb$expt = factor(bb$expt)
-bb$LM = factor(bb$LM)
+# check experiment and landmark group are factors
+oo <- oo %>% 
+  mutate(expt=factor(expt), LM=factor(LM),
+         stepl=stepl/1000) # covert stepl to metres
+oo$LM <- factor(oo$LM, levels=c("N","Y")) %>%
+  fct_relevel(., c("Y","N")) 
+head(oo)
 
-#plot with experiment on X, distance on Y, and landmark group as 
-#different colours (Y = blue, N = red)
-ggplot(bb,aes(factor(expt),stepl, col = LM, fill= LM))+
-  geom_boxplot(width = 0.5)+
-  ylim(0,3000)+
-  theme(legend.position = 'none')+
-  theme(axis.line = element_line(size = 1), panel.background = element_rect(fill = "white"))+
-  scale_fill_manual(values=c('lightcoral','steelblue2'))+
-  scale_color_manual(values = c('red','blue'))+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())+
-  theme(legend.title = element_blank())
+# Plot with experiment on x, distance on y, and landmarks groups 
+# as colours: 
+# (Y = red, N = yellow)
+
+interstopdist.boxplot <-
+  ggplot(oo, aes(factor(expt), stepl, col = LM, fill= LM)) +
+  theme_bw(base_size = 18) +
+  geom_boxplot(position=position_dodge(0.6), width = 0.5) +
+  ylim(0, 3) +
+  ylab("Distance between stops (m)") +
+  xlab("") +
+  scale_fill_manual(values=c(alpha(mycols[1], alpha=alpha.trans),
+                             alpha(mycols[2], alpha=alpha.trans))) +
+  scale_color_manual(values = c(mycols)) +
+  scale_x_discrete(breaks=c(1,2,3), labels=c("Exp 1","Exp 2","Exp 3")) + 
+  theme(panel.background = element_rect(fill = "white"),
+        axis.ticks.x = element_blank(),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        legend.position = "none",
+        plot.margin = 
+          unit(c(t = 0.3, r = 0.3, b = -0.3, l = 0.3), "cm")); interstopdist.boxplot
 
 # Plot the difference between closest stop and closest flown overall
 
-#use summarySE to get means per bird so each bird contributes once to boxplot
-bb = summarySE(data = summary12,measurevar = 'diffStop',groupvars = c('LM','expt','id'))#experiments 1 & 2
-cc = summarySE(data = summary23,measurevar = 'diffStop',groupvars = c('LM','expt','id'))#experiment 3
-cc = cc %>% filter(expt==3)
-bb = rbind(bb,cc)#combine so have all experiments
+# use summarySE to get means per bird so each bird contributes once to boxplot
+pp <- summarySE(data = summary12, measurevar = 'diffStop',
+               groupvars = c('LM','expt','id')) # experiments 1 & 2
+qq <- summarySE(data = summary23, measurevar = 'diffStop',
+               groupvars = c('LM','expt','id')) # experiment 3
+qq <- qq %>% filter(expt==3)
+rr <- rbind(pp,qq) # combine so have all experiments
 
-#check landmarks and experiment are factors
-bb$expt = factor(bb$expt)
-bb$LM = factor(bb$LM)
+# check experiment and landmark group are factors
+rr <- rr %>% 
+  mutate(expt=factor(expt), LM=factor(LM),
+         diffStop=diffStop/1000) # covert diffStop to metres
+rr$LM <- fct_recode(rr$LM, N="Absent", Y="Present") %>%
+  fct_relevel(., c("Y","N")) 
+head(rr)
 
-#plot with experiment on X, difference on Y, and landmark group as different colours (Y = blue, N = red)
-ggplot(bb,aes(factor(expt),diffStop, col = LM, fill= LM))+
-  geom_boxplot(width = 0.5)+
-  ylim(0,1000)+
-  theme(legend.position = 'none')+
-  theme(axis.line = element_line(size = 1), panel.background = element_rect(fill = "white"))+
-  scale_fill_manual(values=c('lightcoral','steelblue2'))+
-  scale_color_manual(values = c('red','blue'))+
-  theme(axis.title.x = element_blank())+
-  theme(axis.title.y = element_blank())+
-  theme(legend.title = element_blank())
+
+# Plot with experiment on x, distance on y, and landmarks groups 
+# as colours: 
+# (Y = red, N = yellow)
+
+diffstop.boxplot <- ggplot(rr, aes(factor(expt), diffStop, col = LM, fill= LM)) +
+  theme_bw(base_size = 18) +
+  geom_boxplot(position=position_dodge(0.6), width = 0.5) +
+  ylim(0, 1) +
+  ylab("Distance between stops \nand closest flown(m)") +
+  xlab("") +
+  scale_fill_manual(values=c(alpha(mycols[1], alpha=alpha.trans),
+                             alpha(mycols[2], alpha=alpha.trans))) +
+  scale_color_manual(values = c(mycols)) +
+  scale_x_discrete(breaks=c(1,2,3), labels=c("Exp 1","Exp 2","Exp 3")) + 
+  theme(panel.background = element_rect(fill = "white"),
+        axis.ticks.x = element_blank(),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        legend.position = "none",
+        plot.margin = 
+          unit(c(t = 0.3, r = 0.3, b = -0.3, l = 0.3), "cm")); diffstop.boxplot
