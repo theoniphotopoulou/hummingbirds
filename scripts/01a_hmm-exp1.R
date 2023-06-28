@@ -414,20 +414,20 @@ save(mFL_2st, file=here("output","exp1_best_models.RData"))
 #' is the best one by far
 
 ## -----------------------------------------------------------------------
-print(mFL1_2st)
-plotStationary(mFL1_2st, plotCI=TRUE)
-CIreal(mFL1_2st)
-CIbeta(mFL1_2st)
+print(mFL_2st)
+plotStationary(mFL_2st, plotCI=TRUE)
+CIreal(mFL_2st)
+CIbeta(mFL_2st)
 
 
 #' Viterbi decoded states (most likely state sequence)  
 #' and State probabilities
 ## -----------------------------------------------------------------------
-exp1_mFL1_2st_states <- viterbi(mFL1_2st)
-exp1data$mFL1_2st <- exp1_mFL1_2st_states
-table(exp1data$mFL1_2st)
-mFL1_2st_probs <- stateProbs(mFL1_2st)
-exp1data$mFL1_2st_TravelProbs <- mFL1_2st_probs[,"Travel"]
+exp1_mFL_2st_states <- viterbi(mFL_2st)
+exp1data$mFL_2st <- exp1_mFL_2st_states
+table(exp1data$mFL_2st)
+mFL_2st_probs <- stateProbs(mFL_2st)
+exp1data$mFL_2st_TravelProbs <- mFL_2st_probs[,"Travel"]
 
 
 #' 
@@ -435,17 +435,17 @@ exp1data$mFL1_2st_TravelProbs <- mFL1_2st_probs[,"Travel"]
 ## -----------------------------------------------------------------------
 zero_step <- which(exp1data$step==0)
 
-pres_mFL1_exp1_2st <- pseudoRes(mFL1_2st)
+pres_mFL_exp1_2st <- pseudoRes(mFL_2st)
 
 # step
-qqnorm(pres_mFL1_exp1_2st$stepRes[-zero_step])
-hist(pres_mFL1_exp1_2st$stepRes[-zero_step])
+qqnorm(pres_mFL_exp1_2st$stepRes[-zero_step])
+hist(pres_mFL_exp1_2st$stepRes[-zero_step])
 # yaw
-qqnorm(pres_mFL1_exp1_2st$yawRes[-zero_step], ylim=c(-pi,pi))
-hist(pres_mFL1_exp1_2st$yawRes[-zero_step])
+qqnorm(pres_mFL_exp1_2st$yawRes[-zero_step], ylim=c(-pi,pi))
+hist(pres_mFL_exp1_2st$yawRes[-zero_step])
 # pitch
-qqnorm(pres_mFL1_exp1_2st$pitchRes[-zero_step])
-hist(pres_mFL1_exp1_2st$pitchRes[-zero_step])
+qqnorm(pres_mFL_exp1_2st$pitchRes[-zero_step])
+hist(pres_mFL_exp1_2st$pitchRes[-zero_step])
 
 #' 
 #' Plot state probabilities for best model
@@ -462,7 +462,7 @@ alpha.trans <- 0.7
 base_size <- 12
 
 exp1 %>%
-    ggplot() + geom_point(aes(x = X, y = Z, colour = mFL1_2st_TravelProbs)) +   
+    ggplot() + geom_point(aes(x = X, y = Z, colour = mFL_2st_TravelProbs)) +   
       theme_bw(base_size=base_size) +
     geom_point(aes(x=Flowerx, y=Flowerz), colour="orange", shape=flower.shape, size=flower.lm.size) +
     geom_point(aes(x=LeftLMx, y=LeftLMz), colour=lmcol, shape=lm.shape, size=flower.lm.size) +
@@ -474,7 +474,7 @@ exp1 %>%
 #' 
 #' Look at the state probability predictions in 3D
 ## -----------------------------------------------------------------------
-pexp1 <- plot_ly(exp1, x = ~X, y = ~Y, z = ~Z, color = ~mFL1_2st_TravelProbs, 
+pexp1 <- plot_ly(exp1, x = ~X, y = ~Y, z = ~Z, color = ~mFL_2st_TravelProbs, 
                  mode = 'markers', legendgroup = "data", showlegend=FALSE) %>%
       add_markers() %>%
       colorbar(title="P(Travel)") %>%

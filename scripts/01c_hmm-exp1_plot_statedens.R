@@ -39,7 +39,7 @@ ls()
 
 # Run with many starting values to find the global maximum 
 load(file=here("output","global_max_models.RData")) 
-m1 <- exp1_gmax #m <- mFL_2st
+m1 <- exp1_gmax 
 
 #' There is one model with high support according to 
 #' the weighted AIC score. This includes 
@@ -103,10 +103,10 @@ st_dat <- exp1data$step
 exp1step_dens <- ggplot(data=data.frame(x=st_dat), aes(x,..density..)) + 
   geom_histogram(boundary=0, binwidth=0.01, fill="grey90") + 
   ylim(0,step.ylim) + xlim(0, step.xlim) + theme_bw() + 
-  geom_line(data=data.frame(x=x, d1_st=d1_st), aes(x, d1_st, colour="Search"), size=linesize) +
-  geom_line(data=data.frame(x=x, d2_st=d2_st), aes(x, d2_st, colour="Travel"), size=linesize) +
+  geom_line(data=data.frame(x=x, d1_st=d1_st), aes(x, d1_st, colour="Search"), linewidth=linesize) +
+  geom_line(data=data.frame(x=x, d2_st=d2_st), aes(x, d2_st, colour="Travel"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, dmarg_st=dmarg_st), aes(x, dmarg_st, color="Marginal"), 
-            size=linesize*.6, linetype="dashed") +
+            linewidth=linesize*.6, linetype="dashed") +
   
   scale_colour_manual(name="Densities", 
                       values = c("Search" = state.cols[1], "Travel" = state.cols[2], "Marginal" = state.cols[3]),
@@ -148,10 +148,10 @@ pt_dat <- exp1data$pitch
 
 exp1pitch_dens <- ggplot(data=data.frame(x=pt_dat), aes(x,..density..)) + 
   geom_histogram(boundary=0, binwidth=0.1, fill="grey90") + ylim(0,angular.ylim) + theme_bw() + 
-  geom_line(data=data.frame(x=x, r1_pt=r1_pt), aes(x, r1_pt, colour="Search"), size=linesize) +
-  geom_line(data=data.frame(x=x, r2_pt=r2_pt), aes(x, r2_pt, colour="Travel"), size=linesize) +
+  geom_line(data=data.frame(x=x, r1_pt=r1_pt), aes(x, r1_pt, colour="Search"), linewidth=linesize) +
+  geom_line(data=data.frame(x=x, r2_pt=r2_pt), aes(x, r2_pt, colour="Travel"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, pmarg_st=pmarg_st), aes(x, pmarg_st, color="Marginal"), 
-            size=linesize*.6, linetype="dashed") +
+            linewidth=linesize*.6, linetype="dashed") +
   
   scale_colour_manual(name="Densities", 
                       values = c("Search" = state.cols[1], "Travel" = state.cols[2], "Marginal" = state.cols[3]),
@@ -192,10 +192,10 @@ yw_dat <- exp1data$yaw
 
 exp1yaw_dens <- ggplot(data=data.frame(x=yw_dat), aes(x,..density..)) + 
   geom_histogram(boundary=0, binwidth=0.1, fill="grey90") + ylim(0,angular.ylim) + theme_bw() + 
-  geom_line(data=data.frame(x=x, r1_yw=r1_yw), aes(x, r1_yw, colour="Search"), size=linesize) +
-  geom_line(data=data.frame(x=x, r2_yw=r2_yw), aes(x, r2_yw, colour="Travel"), size=linesize) +
+  geom_line(data=data.frame(x=x, r1_yw=r1_yw), aes(x, r1_yw, colour="Search"), linewidth=linesize) +
+  geom_line(data=data.frame(x=x, r2_yw=r2_yw), aes(x, r2_yw, colour="Travel"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, ymarg_st=ymarg_st), aes(x, ymarg_st, color="Marginal"), 
-            size=linesize*.6, linetype="dashed") +
+            linewidth=linesize*.6, linetype="dashed") +
   
   scale_colour_manual(name="Densities", 
                       values = c("Search" = state.cols[1], "Travel" = state.cols[2], "Marginal" = state.cols[3]),

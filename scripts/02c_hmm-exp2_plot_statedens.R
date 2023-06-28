@@ -26,13 +26,6 @@ opts_chunk$set(fig.width=12, fig.height=4.5, error=TRUE,cache = FALSE)
 #' Load the data for experiment 2
 load(file=here("output/exp2data.RData"))
 
-#' Here the distance from flower is often very large, just because of the experimental set up. 
-#' But only a very few of them are that large, so I'm going to remove them.
-far <- which(exp2data$CurrFlowerDist>6)
-length(far)
-exp2data[far,]
-# None here
-
 #' Load the AIC weights table and the three best models
 load(file=here("output","exp2_aic_weights.RData"))
 load(file=here("output","exp2_best_models.RData"))
@@ -40,7 +33,7 @@ ls()
 
 # Run with many starting values to find the global maximum 
 load(file=here("output","global_max_models.RData")) 
-m2 <- exp2_gmax #m <- mFL8_2st
+m2 <- exp2_gmax 
 
 #' There is one model with an overwhelming amount of support according to 
 #' the weighted AIC score. The model with model support includes landmarks 
@@ -65,9 +58,6 @@ exp2vit_states <- data.frame(all=as.numeric(table(exp2data$viterbi_states)/lengt
 
 delta.avg <- as.numeric(table(viterbi(m2))/length(viterbi(m2)))
 
-#plot(m2, ask=FALSE, breaks=50, plotCI=TRUE)
-#covs <- data.frame(LM="N")
-#plotStationary(m2, plotCI=TRUE, covs=covs)
 m2_CIreal <- CIreal(m2)
 m2_CIbeta <- CIbeta(m2)
 m2_CIreal$step[3:4]
@@ -116,12 +106,11 @@ dmarg_st <- d1_st + d2_st
 # Plot densities for step length, using manual colours or a colour palette like `viridis` or `RColorBrewer`
 st_dat <- exp2data$step
 
-quartz()
 exp2step_dens <- ggplot(data=data.frame(x=st_dat), aes(x,..density..)) + 
   geom_histogram(boundary=0, binwidth=0.01, fill="grey90") + 
   ylim(0,step.ylim) + xlim(0, step.xlim) + theme_bw() + 
-  geom_line(data=data.frame(x=x, d1_st=d1_st), aes(x, d1_st, colour="Search"), size=linesize) +
-  geom_line(data=data.frame(x=x, d2_st=d2_st), aes(x, d2_st, colour="Travel"), size=linesize) +
+  geom_line(data=data.frame(x=x, d1_st=d1_st), aes(x, d1_st, colour="Search"), linewidth=linesize) +
+  geom_line(data=data.frame(x=x, d2_st=d2_st), aes(x, d2_st, colour="Travel"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, dmarg_st=dmarg_st), aes(x, dmarg_st, color="Marginal"), 
             size=linesize*.6, linetype="dashed") +
   
@@ -163,13 +152,12 @@ linesize <- 2
 # Plot densities for step length, using manual colours or a colour palette like `viridis` or `RColorBrewer`
 pt_dat <- exp2data$pitch
 
-#quartz()
 exp2pitch_dens <- ggplot(data=data.frame(x=pt_dat), aes(x,..density..)) + 
   geom_histogram(boundary=0, binwidth=0.1, fill="grey90") + ylim(0,angular.ylim) + theme_bw() + 
-  geom_line(data=data.frame(x=x, r1_pt=r1_pt), aes(x, r1_pt, colour="Search"), size=linesize) +
-  geom_line(data=data.frame(x=x, r2_pt=r2_pt), aes(x, r2_pt, colour="Travel"), size=linesize) +
+  geom_line(data=data.frame(x=x, r1_pt=r1_pt), aes(x, r1_pt, colour="Search"), linewidth=linesize) +
+  geom_line(data=data.frame(x=x, r2_pt=r2_pt), aes(x, r2_pt, colour="Travel"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, pmarg_st=pmarg_st), aes(x, pmarg_st, color="Marginal"), 
-            size=linesize*.6, linetype="dashed") +
+            linewidth=linesize*.6, linetype="dashed") +
   
   scale_colour_manual(name="Densities", 
                       values = c("Search" = state.cols[1], "Travel" = state.cols[2], "Marginal" = state.cols[3]),
@@ -211,10 +199,10 @@ yw_dat <- exp2data$yaw
 
 exp2yaw_dens <- ggplot(data=data.frame(x=yw_dat), aes(x,..density..)) + 
   geom_histogram(boundary=0, binwidth=0.1, fill="grey90") + ylim(0,angular.ylim) + theme_bw() + 
-  geom_line(data=data.frame(x=x, r1_yw=r1_yw), aes(x, r1_yw, colour="Search"), size=linesize) +
-  geom_line(data=data.frame(x=x, r2_yw=r2_yw), aes(x, r2_yw, colour="Travel"), size=linesize) +
+  geom_line(data=data.frame(x=x, r1_yw=r1_yw), aes(x, r1_yw, colour="Search"), linewidth=linesize) +
+  geom_line(data=data.frame(x=x, r2_yw=r2_yw), aes(x, r2_yw, colour="Travel"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, ymarg_st=ymarg_st), aes(x, ymarg_st, color="Marginal"), 
-            size=linesize*.6, linetype="dashed") +
+            linewidth=linesize*.6, linetype="dashed") +
   
   scale_colour_manual(name="Densities", 
                       values = c("Search" = state.cols[1], "Travel" = state.cols[2], "Marginal" = state.cols[3]),

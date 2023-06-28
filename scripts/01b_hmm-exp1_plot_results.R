@@ -103,11 +103,11 @@ gamInd <- 11:14
 #' your tpm (coefficients in your linear predictor) and that's where 
 #' your gammas will end
 Sigma[gamInd,gamInd]
-# [,1]         [,2]         [,3]         [,4]
-# [1,]  0.017458151 -0.017247941  0.002349312 -0.002398361
-# [2,] -0.017247941  0.029391918 -0.002196825  0.003115864
-# [3,]  0.002349312 -0.002196825  0.026263774 -0.027573586
-# [4,] -0.002398361  0.003115864 -0.027573586  0.041776038
+#              [,1]         [,2]         [,3]         [,4]
+# [1,]  0.017458160 -0.017247946  0.002349419 -0.002398494
+# [2,] -0.017247946  0.029391901 -0.002196996  0.003116069
+# [3,]  0.002349419 -0.002196996  0.026263873 -0.027573747
+# [4,] -0.002398494  0.003116069 -0.027573747  0.041776311
 
 #' Quantile for confidence interval (1.96 for 95% CI)
 quantSup <- 1.96
@@ -146,7 +146,7 @@ for(state in 1:nbStates) {
   
 }
 
-#' Plot state probs and confidence intervals for when landmarks are present
+#' Check it looks ok: Plot state probs and confidence intervals for when landmarks are present
 pal <- c("firebrick", "royalblue")
 plot(NA, xlim = range(covsY$CurrFlowerDist), ylim = c(0, 1))
 for(state in 1:nbStates) {
@@ -171,7 +171,6 @@ save(LMYexp1, file=here("output","exp1_stationary_predata.RData"))
 alpha.trans <- 0.2
 mycols <- viridis_pal(begin=0.05, end=0.65, option="D")(2)
 
-quartz()
 ggplot() +
   geom_line(data=LMYexp1, aes(x=CurrFlowerDist, y=Search_mle), colour=viridis(2)[1]) + # purple
   geom_segment(data=LMYexp1, aes(x=CurrFlowerDist, xend=CurrFlowerDist, 
@@ -186,7 +185,6 @@ ggplot() +
   theme_bw()
 
 #' # Bands for the confidence intervals 
-quartz()
 ggplot(LMYexp1) +
   # Search
   geom_line(aes(x=CurrFlowerDist, y=Search_mle, colour="Search")) + 
@@ -244,10 +242,10 @@ st_dat <- exp1data$step
 #quartz()
 exp1step_dens <- ggplot(data=data.frame(x=st_dat), aes(x,..density..)) + 
   geom_histogram(boundary=0, binwidth=0.01, fill="grey90") + ylim(0,45) + theme_bw() + 
-  geom_line(data=data.frame(x=x, d1_st=d1_st), aes(x, d1_st, colour="Search"), size=linesize) +
-  geom_line(data=data.frame(x=x, d2_st=d2_st), aes(x, d2_st, colour="Travel"), size=linesize) +
+  geom_line(data=data.frame(x=x, d1_st=d1_st), aes(x, d1_st, colour="Search"), linewidth=linesize) +
+  geom_line(data=data.frame(x=x, d2_st=d2_st), aes(x, d2_st, colour="Travel"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, dmarg_st=dmarg_st), aes(x, dmarg_st, color="Marginal"), 
-            size=linesize*.6, linetype="dashed") +
+            linewidth=linesize*.6, linetype="dashed") +
   
   scale_colour_manual(name="Exp 1 Densities", 
                       values = c("Search" = state.cols[1], "Travel" = state.cols[2], "Marginal" = state.cols[3]),
@@ -290,10 +288,10 @@ pt_dat <- exp1data$pitch
 #quartz()
 exp1pitch_dens <- ggplot(data=data.frame(x=pt_dat), aes(x,..density..)) + 
   geom_histogram(boundary=0, binwidth=0.1, fill="grey90") + ylim(0,6.5) + theme_bw() + 
-  geom_line(data=data.frame(x=x, r1_pt=r1_pt), aes(x, r1_pt, colour="Search"), size=linesize) +
-  geom_line(data=data.frame(x=x, r2_pt=r2_pt), aes(x, r2_pt, colour="Travel"), size=linesize) +
+  geom_line(data=data.frame(x=x, r1_pt=r1_pt), aes(x, r1_pt, colour="Search"), linewidth=linesize) +
+  geom_line(data=data.frame(x=x, r2_pt=r2_pt), aes(x, r2_pt, colour="Travel"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, pmarg_st=pmarg_st), aes(x, pmarg_st, color="Marginal"), 
-            size=linesize*.6, linetype="dashed") +
+            linewidth=linesize*.6, linetype="dashed") +
   
   scale_colour_manual(name="Densities", 
                       values = c("Search" = state.cols[1], "Travel" = state.cols[2], "Marginal" = state.cols[3]),
@@ -334,10 +332,10 @@ yw_dat <- exp1data$yaw
 
 exp1yaw_dens <- ggplot(data=data.frame(x=yw_dat), aes(x,..density..)) + 
   geom_histogram(boundary=0, binwidth=0.1, fill="grey90") + ylim(0,6.5) + theme_bw() + 
-  geom_line(data=data.frame(x=x, r1_yw=r1_yw), aes(x, r1_yw, colour="Search"), size=linesize) +
-  geom_line(data=data.frame(x=x, r2_yw=r2_yw), aes(x, r2_yw, colour="Travel"), size=linesize) +
+  geom_line(data=data.frame(x=x, r1_yw=r1_yw), aes(x, r1_yw, colour="Search"), linewidth=linesize) +
+  geom_line(data=data.frame(x=x, r2_yw=r2_yw), aes(x, r2_yw, colour="Travel"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, ymarg_st=ymarg_st), aes(x, ymarg_st, color="Marginal"), 
-            size=linesize*.6, linetype="dashed") +
+            linewidth=linesize*.6, linetype="dashed") +
   
   scale_colour_manual(name="Densities", 
                       values = c("Search" = state.cols[1], "Travel" = state.cols[2], "Marginal" = state.cols[3]),
@@ -382,7 +380,7 @@ betamat <- matrix(m$mle$beta, ncol=2)
 for(i in 1:lengthout) { 
   gamma <- diag(nbStates)
   gamma[!gamma] <- exp(betamat[1,] + betamat[2,]*covsYvec[i])
-  tpms[,,i] <- t(gamma/apply(gamma, 1, sum)) # you might need to apply a transpose to this t(gamma/apply(gamma, 1, sum))
+  tpms[,,i] <- t(gamma/apply(gamma, 1, sum)) 
 }
 # tpm at covar min
 tpms[,,1]
@@ -397,11 +395,11 @@ dim(Sigma)
 gamInd <- 11:14  
 
 Sigma[gamInd,gamInd]
-# [,1]         [,2]         [,3]         [,4]
-# [1,]  0.017458151 -0.017247941  0.002349312 -0.002398361
-# [2,] -0.017247941  0.029391918 -0.002196825  0.003115864
-# [3,]  0.002349312 -0.002196825  0.026263774 -0.027573586
-# [4,] -0.002398361  0.003115864 -0.027573586  0.041776038
+#              [,1]         [,2]         [,3]         [,4]
+# [1,]  0.017458160 -0.017247946  0.002349419 -0.002398494
+# [2,] -0.017247946  0.029391901 -0.002196996  0.003116069
+# [3,]  0.002349419 -0.002196996  0.026263873 -0.027573747
+# [4,] -0.002398494  0.003116069 -0.027573747  0.041776311
 m$mle$beta
 
 #' Quantile for confidence interval (1.96 for 95% CI)
@@ -413,16 +411,6 @@ get_gamma <- function(beta, covs, nbStates, i, j) {
   gamma <- moveHMM:::trMatrix_rcpp(nbStates, beta, covs)[,,1] # get gamma from beta
   gamma[i,j]
 }
-
-# testing *************** 20191220 - HERE IS THE PROBLEM: using a transpose when calculating gamma above solves it ****************
-tpms[,,1]
-get_gamma(beta=betaMLE, covs = matrix(desMatY[1,], nrow=1), nbStates = nbStates, i = 1, j = 2)
-t(apply(desMatY, 1, function(x)
-  grad(get_gamma, betaMLE, covs = matrix(x, nrow = 1), nbStates = nbStates, i = 1, j = 2)))
-tpms[,,1]
-get_gamma(beta=betaMLE, covs = matrix(desMatY[1,], nrow=1), nbStates = nbStates, i = 2, j = 1)
-get_gamma(beta=betaMLE, covs = matrix(desMatY[1,], nrow=1), nbStates = nbStates, i = 1, j = 1)
-get_gamma(beta=betaMLE, covs = matrix(desMatY[1,], nrow=1), nbStates = nbStates, i = 2, j = 2)
 
 #' Loop over states
 lciYgamma <- matrix(NA, lengthout, nbStates*2)
@@ -439,9 +427,6 @@ state <- 1
     grad(get_gamma, betaMLE, covs = matrix(x, nrow = 1), nbStates = nbStates, i = state+1, j = state)))
   
   # Standard errors from delta method formula
-  #seY <- t(apply(dNY, 1, function(x)
-  #  suppressWarnings(sqrt(x%*%Sigma[gamInd[unique(c(m$conditions$betaCons))],gamInd[unique(c(m$conditions$betaCons))]]%*%x))))
-  
   seYgamma12 <- t(apply(dNYgamma12, 1, function(x)
     sqrt(x%*%Sigma[gamInd,gamInd]%*%x)))
   seYgamma21 <- t(apply(dNYgamma21, 1, function(x)
@@ -456,7 +441,7 @@ state <- 1
   uciYgamma[,2] <- plogis(qlogis(tpms[2,1,]) + quantSup*seYgamma21/(tpms[2,1,]-tpms[2,1,]^2))
   
 
-#' Plot state probs and confidence intervals for when landmarks are present
+#' Check it looks ok: Plot state probs and confidence intervals for when landmarks are present
 Trans <- c(3,2)
 pal <- c("firebrick", "royalblue")
 plot(NA, xlim = range(covsY$CurrFlowerDist), ylim = c(0, 1))
@@ -478,8 +463,6 @@ LMYexp1_gamma <- data.frame(CurrFlowerDist=covsY$CurrFlowerDist,
                         Inv_to_Trav_low=lciYgamma[,3], Inv_to_Trav_mle=tpms[1,2,], Inv_to_Trav_upp=uciYgamma[,3],
                         Trav_to_Inv_low=lciYgamma[,2], Tra_to_Inv_mle=tpms[2,1,], Trav_to_Inv_upp=uciYgamma[,2])
   
-# THIS IS CORRECT NOW - 20190726
-
 save(LMYexp1_gamma, file=here("output","exp1_gamma_predata.RData"))
 
 

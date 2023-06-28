@@ -28,7 +28,7 @@ load(file=here("output/exp2data.RData"))
 # Ran with many starting values to find the global maximum 
 load(file=here("output","global_max_models.RData")) 
 
-m2 <- exp2_gmax #m <- mFL8_2st
+m2 <- exp2_gmax 
 exp2pars <- getPar0(m2)
 exp2formula <- m2$conditions$formula
 

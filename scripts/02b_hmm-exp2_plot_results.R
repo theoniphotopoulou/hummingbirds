@@ -55,7 +55,7 @@ ls()
 
 # Run with many starting values to find the global maximum 
 load(file=here("output","global_max_models.RData")) 
-m2 <- exp2_gmax #m <- mFL8_2st
+m2 <- exp2_gmax 
 
 #' There is one model with an overwhelming amount of support according to 
 #' the weighted AIC score. The model with model support includes landmarks 
@@ -211,7 +211,6 @@ save(LMYexp2, LMNexp2, file=here("output","exp2_stationary_predata.RData"))
 alpha.trans <- 0.2
 mycols <- viridis_pal(begin=0.05, end=0.65, option="D")(2)
 
-quartz()
 ggplot() +
   geom_line(data=LMNexp2, aes(x=CurrFlowerDist, y=Search_mle), colour=viridis(2)[1]) + 
   geom_segment(data=LMNexp2, aes(x=CurrFlowerDist, xend=CurrFlowerDist, 
@@ -225,7 +224,6 @@ ggplot() +
   theme_bw()
 
 #' # Bands for the confidence intervals 
-quartz()
 ggplot(LMNexp2) +
   # Search
   geom_line(aes(x=CurrFlowerDist, y=Search_mle, colour="Search")) + 
@@ -248,7 +246,6 @@ ggplot(LMNexp2) +
 
 #' Stationary state probabilities when there are landmarks
 #' # momentuHMM style plot
-quartz()
 ggplot() +
   geom_line(data=LMYexp2, aes(x=CurrFlowerDist, y=Search_mle), colour=viridis(2)[1]) + 
   geom_segment(data=LMYexp2, aes(x=CurrFlowerDist, xend=CurrFlowerDist, 
@@ -262,7 +259,6 @@ ggplot() +
   theme_bw()
 
 #' # Bands for the confidence intervals 
-quartz()
 ggplot(LMYexp2) +
   # Search
   geom_line(aes(x=CurrFlowerDist, y=Search_mle, colour="Search")) + 
@@ -319,13 +315,12 @@ linesize <- 2
 # Plot densities for step length, using manual colours or a colour palette like `viridis` or `RColorBrewer`
 st_dat <- exp2data$step
 
-#quartz()
 exp2step_dens <- ggplot(data=data.frame(x=st_dat), aes(x,..density..)) + 
   geom_histogram(boundary=0, binwidth=0.01, fill="grey90") + ylim(0,45) + theme_bw() + 
-  geom_line(data=data.frame(x=x, d1_st=d1_st), aes(x, d1_st, colour="Search"), size=linesize) +
-  geom_line(data=data.frame(x=x, d2_st=d2_st), aes(x, d2_st, colour="Travel"), size=linesize) +
+  geom_line(data=data.frame(x=x, d1_st=d1_st), aes(x, d1_st, colour="Search"), linewidth=linesize) +
+  geom_line(data=data.frame(x=x, d2_st=d2_st), aes(x, d2_st, colour="Travel"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, dmarg_st=dmarg_st), aes(x, dmarg_st, color="Marginal"), 
-            size=linesize*.6, linetype="dashed") +
+            linewidth=linesize*.6, linetype="dashed") +
   
   scale_colour_manual(name="Exp 2 Densities", 
                       values = c("Search" = state.cols[1], "Travel" = state.cols[2], "Marginal" = state.cols[3]),
@@ -365,13 +360,12 @@ linesize <- 2
 # Plot densities for step length, using manual colours or a colour palette like `viridis` or `RColorBrewer`
 pt_dat <- exp2data$pitch
 
-#quartz()
 exp2pitch_dens <- ggplot(data=data.frame(x=pt_dat), aes(x,..density..)) + 
   geom_histogram(boundary=0, binwidth=0.1, fill="grey90") + ylim(0,6.5) + theme_bw() + 
-  geom_line(data=data.frame(x=x, r1_pt=r1_pt), aes(x, r1_pt, colour="Search"), size=linesize) +
-  geom_line(data=data.frame(x=x, r2_pt=r2_pt), aes(x, r2_pt, colour="Travel"), size=linesize) +
+  geom_line(data=data.frame(x=x, r1_pt=r1_pt), aes(x, r1_pt, colour="Search"), linewidth=linesize) +
+  geom_line(data=data.frame(x=x, r2_pt=r2_pt), aes(x, r2_pt, colour="Travel"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, pmarg_st=pmarg_st), aes(x, pmarg_st, color="Marginal"), 
-            size=linesize*.6, linetype="dashed") +
+            linewidth=linesize*.6, linetype="dashed") +
   
   scale_colour_manual(name="Densities", 
                       values = c("Search" = state.cols[1], "Travel" = state.cols[2], "Marginal" = state.cols[3]),
@@ -412,10 +406,10 @@ yw_dat <- exp2data$yaw
 
 exp2yaw_dens <- ggplot(data=data.frame(x=yw_dat), aes(x,..density..)) + 
   geom_histogram(boundary=0, binwidth=0.1, fill="grey90") + ylim(0,6.5) + theme_bw() + 
-  geom_line(data=data.frame(x=x, r1_yw=r1_yw), aes(x, r1_yw, colour="Search"), size=linesize) +
-  geom_line(data=data.frame(x=x, r2_yw=r2_yw), aes(x, r2_yw, colour="Travel"), size=linesize) +
+  geom_line(data=data.frame(x=x, r1_yw=r1_yw), aes(x, r1_yw, colour="Search"), linewidth=linesize) +
+  geom_line(data=data.frame(x=x, r2_yw=r2_yw), aes(x, r2_yw, colour="Travel"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, ymarg_st=ymarg_st), aes(x, ymarg_st, color="Marginal"), 
-            size=linesize*.6, linetype="dashed") +
+            linewidth=linesize*.6, linetype="dashed") +
   
   scale_colour_manual(name="Densities", 
                       values = c("Search" = state.cols[1], "Travel" = state.cols[2], "Marginal" = state.cols[3]),
@@ -428,7 +422,6 @@ exp2yaw_dens <- ggplot(data=data.frame(x=yw_dat), aes(x,..density..)) +
   theme(text=element_text(size=18)) + theme(legend.position = "none"); exp2yaw_dens
 
 # plot together
-quartz()
 lay <- matrix(c(1,2,3), ncol=3, nrow=1, byrow = T)
 exp2_statedens <- grid.arrange(exp2step_dens, exp2pitch_dens, exp2yaw_dens, layout_matrix=lay)  
 #plot_grid(exp1step_dens, exp1pitch_dens, exp1yaw_dens, ncol=3)
@@ -566,7 +559,7 @@ lciNgamma[,2] <- plogis(qlogis(tpmsN[2,1,]) - quantSup*seNgamma21/(tpmsN[2,1,]-t
 uciNgamma[,2] <- plogis(qlogis(tpmsN[2,1,]) + quantSup*seNgamma21/(tpmsN[2,1,]-tpmsN[2,1,]^2))
 
 
-#' Plot state probs and confidence intervals for when landmarks are present
+#' Check it looks ok: Plot state probs and confidence intervals for when landmarks are present
 Trans <- c(3,2)
 pal <- c("firebrick", "royalblue")
 plot(NA, xlim = range(covsY$CurrFlowerDist), ylim = c(0, 1))

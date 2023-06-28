@@ -224,7 +224,7 @@ summary23$id <- factor(summary23$id)
 # from zero so that the Gamma distribution can be used for modelling, 
 # below. 
 
-# We use a constant of 5 to offset all variables in data sets, 
+# We use a constant of 3 to offset all variables in data sets, 
 # from all experiments
 scaling.offset <- 3
 

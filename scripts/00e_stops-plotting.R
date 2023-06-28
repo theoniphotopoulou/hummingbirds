@@ -314,9 +314,8 @@ ggsave(filename=here::here("figures","comp_stops_plot.jpg"),
 
 
 #######
-## START HERE! 20210816 :)
-## Do I need to revise the rest? It seems like only
-## these two boxplots are included in the composite plot from David
+## START HERE! 20230621 :)
+## Make plot look like 2023 draft
 ######
 
 
