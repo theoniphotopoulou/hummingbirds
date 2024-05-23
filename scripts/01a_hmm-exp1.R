@@ -50,7 +50,7 @@ library(here)
 #' 
 #' Load the data for experiment one
 ## -----------------------------------------------------------------------
-exp1data <- read.csv(here::here("data/processed-data.csv")) %>%
+exp1data <- read.csv(here::here("data/processed-data_2024.csv")) %>%
   filter(Exp==1) 
 
 names(exp1data)

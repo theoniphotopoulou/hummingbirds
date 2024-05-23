@@ -37,6 +37,7 @@ exp2data %>% group_by(ID) %>% summarise(LM=first(LM))
 
 # Fit model to all individuals
 exp2workingIDs <- unique(exp2data$ID)
+exp2workingIDs[-10]
 idm_exp2 <- foreach(i=exp2workingIDs) %do% {
   subdat <- exp2data %>% filter(ID==i)
   subprep <- prepData(data = subdat, covNames = c('row', 'Exp', 'Section', 'X', 'Y', 'Z', 
@@ -45,13 +46,16 @@ idm_exp2 <- foreach(i=exp2workingIDs) %do% {
                                                   'RightLMx', 'RightLMy', 'RightLMz', 
                                                   'Flowerx', 'Flowery', 'Flowerz'), 
                       coordNames = NULL) 
-  mls <- fitHMM(subprep, nbStates=2, 
+  mls <- try(fitHMM(subprep, nbStates=2, 
                 dist = list(step = 'gamma', yaw = 'wrpcauchy', pitch = 'wrpcauchy'), 
                 Par0 = list(step = exp2pars$Par$step, 
                             yaw = exp2pars$Par$yaw, 
                             pitch = exp2pars$Par$pitch),
                 formula = exp2formula,
-                stateNames = stateNames)
+                stateNames = stateNames), silent=TRUE)
+  if(inherits(mls, "try-error")){mls <- list(mle="ERROR")} else {
+    mls <- mls
+  }
 }
 
 # extract tpm coefficients
@@ -59,9 +63,14 @@ map(idm_exp2, "mle")
 mod.codes <- map(idm_exp2, pluck, 5, "code")
 which(mod.codes>2)
 betamles_exp2 <- map_depth(idm_exp2, .depth=2, "beta") %>% map(., "mle")
+for (i in 1:length(exp2workingIDs)){
+  betamles_exp2[i] <- ifelse(is.null(betamles_exp2[i][[1]]), "ERROR", betamles_exp2[i])
+}
 
-# birds 3 and 10 have very few data points (45 and 24, respectively) and 
-# the models for these birds, on their own, didn't converge
+
+# bird 10 has very few data points (n=24) and 
+# the model for this bird, on its own, didn't converge
+# (originally 3 also didn't converge with 45 observations)
 
 # bird IDs for LM=Y
 LMYexp2_IDs <- exp2data %>% group_by(ID) %>% 
@@ -78,8 +87,8 @@ LMNexp2_IDs <- exp2data %>% group_by(ID) %>%
   select(ID) %>%
   data.frame() 
 LMNexp2_IDs
-which(LMNexp2_IDs$ID %in% c(10,3))
-LMNexp2_IDs_new <- LMNexp2_IDs[-c(2,4),] %>% data.frame(ID=.)
+which(LMNexp2_IDs$ID %in% c(10))
+LMNexp2_IDs_new <- LMNexp2_IDs[-c(4),] %>% data.frame(ID=.)
 
 # Define a range of values for your covariate
 covar_CurrFlowerDist <- exp2data$CurrFlowerDist
@@ -182,7 +191,7 @@ lciY_exp2 <- outY$lciY_exp2
 LMNexp2_IDs # c(1,3,5,10,11,12,14)
 LMNexp2_IDs_new
 foreach(i=1:nrow(LMNexp2_IDs_new)) %do% {
-  #i <- 7
+  #i <- 4
   ii <- LMNexp2_IDs_new$ID[i]
   m <- idm_exp2[[ii]]
   probsN_exp2[[i]] <- stationary(m, covs=desMatN_exp2)[[1]]

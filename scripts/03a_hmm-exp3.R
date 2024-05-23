@@ -105,9 +105,9 @@ ggplot() +
 glimpse(exp3data[c(1:5),])
 
 loc_df <- exp3data %>% group_by(ID) %>%
-  summarise(Flowerx=mean(Flowerx, na.rm=TRUE),
-            Flowery=mean(Flowery, na.rm=TRUE),
-            Flowerz=mean(Flowerz, na.rm=TRUE),
+  summarise(Flowerx=mean(flowerx, na.rm=TRUE),
+            Flowery=mean(flowery, na.rm=TRUE),
+            Flowerz=mean(flowerz, na.rm=TRUE),
             LeftLMx=mean(LeftLMx, na.rm=TRUE),
             LeftLMy=mean(LeftLMy, na.rm=TRUE),
             LeftLMz=mean(LeftLMz, na.rm=TRUE),
@@ -694,7 +694,7 @@ base_size <- 12
 exp3 %>%
     ggplot() + geom_point(aes(x = X, y = Z, colour = mFL5_2st_TravelProbs)) + 
       theme_bw(base_size=base_size) +
-    geom_point(aes(x=Flowerx, y=Flowerz), colour="orange", shape=flower.shape, size=flower.lm.size) +
+    geom_point(aes(x=flowerx, y=flowerz), colour="orange", shape=flower.shape, size=flower.lm.size) +
     geom_point(aes(x=LeftLMx, y=LeftLMz), colour=lmcol, shape=lm.shape, size=flower.lm.size) +
     geom_point(aes(x=RightLMx, y=RightLMz), colour=lmcol, shape=lm.shape, size=flower.lm.size) +
     coord_fixed(ratio=plot_aspect) + 

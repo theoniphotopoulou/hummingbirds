@@ -44,15 +44,6 @@ opts_chunk$set(fig.width=12, fig.height=4.5, error=TRUE,cache = FALSE)
 #' Load the data for experiment three
 load(file=here("output/exp3data.RData"))
 
-#' Here the distance from flower is often very large, just because of the experimental set up. 
-#' But only a very few of them are that large
-# far <- which(exp3data$CurrFlowerDist>6)
-# length(far)
-# exp3data[far,]
-# dim(exp3data)
-# exp3data <- exp3data[-far,]
-# dim(exp3data)
-
 #' Load the AIC weights table and the three best models
 load(file=here("output","exp3_aic_weights.RData"))
 load(file=here("output","exp3_best_models.RData"))

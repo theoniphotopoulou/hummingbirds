@@ -28,7 +28,7 @@ load(file=here("output/exp3data.RData"))
 # Ran with many starting values to find the global maximum 
 load(file=here("output","global_max_models.RData")) 
 
-m3 <- exp3_gmax #m <-mFL9_2st
+m3 <- exp3_gmax #m <-mFL5_2st
 exp3pars <- getPar0(m3)
 exp3formula <- m3$conditions$formula
 DMestmean <- list(step = list(mean = ~ LM, sd = ~1, zeromass = ~1),
