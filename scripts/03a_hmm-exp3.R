@@ -61,7 +61,9 @@ library(here)
 #' 
 #' Load the data for experiment three
 ## -----------------------------------------------------------------------
-exp3data <- read.csv(here::here("data/processed-data.csv")) %>%
+exp3data <- read.csv(here::here("data/processed-data_2024.csv")) %>%
+  filter(Exp==3) 
+exp3data_OLD <- read.csv(here::here("data/processed-data.csv")) %>%
   filter(Exp==3) 
 
 names(exp3data)
@@ -76,7 +78,10 @@ table(exp3data$LM)
 exp3data <- exp3data %>%
   mutate(step = step/1000,
          CurrFlowerDist = CurrFlowerDist/1000,
-         LM = factor(LM, levels=c("Y","N")))
+         LM = factor(LM, levels=c("Y","N"))) %>%
+  rename(Flowerx = FlowerX,
+         Flowery = FlowerY,
+         Flowerz = FlowerZ)
 
 head(exp3data)
 
@@ -105,9 +110,9 @@ ggplot() +
 glimpse(exp3data[c(1:5),])
 
 loc_df <- exp3data %>% group_by(ID) %>%
-  summarise(Flowerx=mean(flowerx, na.rm=TRUE),
-            Flowery=mean(flowery, na.rm=TRUE),
-            Flowerz=mean(flowerz, na.rm=TRUE),
+  summarise(Flowerx=mean(Flowerx, na.rm=TRUE),
+            Flowery=mean(Flowery, na.rm=TRUE),
+            Flowerz=mean(Flowerz, na.rm=TRUE),
             LeftLMx=mean(LeftLMx, na.rm=TRUE),
             LeftLMy=mean(LeftLMy, na.rm=TRUE),
             LeftLMz=mean(LeftLMz, na.rm=TRUE),
@@ -627,36 +632,45 @@ aic_weights_exp3 <- aic_weights %>%
 
 #' 
 #' ### Describe best model 
-#' The model with landmarks on the mean of the step length distribution and 
+#' PREVIOUSLY! The model with landmarks on the mean of the step length distribution and 
 #' current flower distance affecting all transitions has the most support (82%). 
 #' Two other models have some support: the model with landmarks on the mean 
 #' of the step length distribution and current flower distance affecting 
 #' affecting only transitions out of state 2 (14%) and the model with landmarks 
 #' on the mean of the step length distribution and no covariates on the 
 #' transition probabilities (4%).
+#' 2024: The model landmarks and current distance to flower as interacting covariates 
+#' on the probability of transitioning between states has the most support (81%). 
+#' One other model have some support: the model with current distance from flower
+#' as a covariate on the transition probabilities, and the estimation of mean pitch
+#' and mean yaw (8%)
+#' 
+#' If there were landmarks, birds were more likely to be in an searching state, 
+#' than a travelling state. 
+#' 
 #' 
 ## -----------------------------------------------------------------------
 save(aic_weights_exp3, file=here("output","exp3_aic_weights.RData"))
-save(mFL5_2st, file=here("output","exp3_best_models.RData"))
+save(mFL8_2st, file=here("output","exp3_best_models.RData"))
 
 #' 
 ## -----------------------------------------------------------------------
-print(mFL5_2st)
-plot(mFL5_2st, ask=FALSE, breaks=50, plotCI=TRUE)
+print(mFL8_2st)
+plot(mFL8_2st, ask=FALSE, breaks=50, plotCI=TRUE)
 covs <- data.frame(LM="N")
-plotStationary(mFL5_2st, plotCI=TRUE, covs=covs)
-CIreal(mFL5_2st)
-mFL5_CIbeta <- CIbeta(mFL5_2st)
+plotStationary(mFL8_2st, plotCI=TRUE, covs=covs)
+CIreal(mFL8_2st)
+mFL8_CIbeta <- CIbeta(mFL8_2st)
 
 #' Viterbi decoded states (most likely state sequence)  
 #' and State probabilities
 ## -----------------------------------------------------------------------
 # decode most likely state sequence
-exp3_mFL5_2st_states <- viterbi(mFL5_2st)
-exp3data$mFL5_2st <- exp3_mFL5_2st_states
-table(exp3data$mFL5_2st)
-mFL5_2st_probs <- stateProbs(mFL5_2st)
-exp3data$mFL5_2st_TravelProbs <- mFL5_2st_probs[,"Travel"]
+exp3_mFL8_2st_states <- viterbi(mFL8_2st)
+exp3data$mFL8_2st <- exp3_mFL8_2st_states
+table(exp3data$mFL8_2st)
+mFL8_2st_probs <- stateProbs(mFL8_2st)
+exp3data$mFL8_2st_TravelProbs <- mFL8_2st_probs[,"Travel"]
 
 
 #' 
@@ -664,17 +678,17 @@ exp3data$mFL5_2st_TravelProbs <- mFL5_2st_probs[,"Travel"]
 ## -----------------------------------------------------------------------
 zero_step <- which(exp3data$step==0)
 
-pres_mFL5_exp3_2st <- pseudoRes(mFL5_2st)
+pres_mFL8_exp3_2st <- pseudoRes(mFL8_2st)
 
 # step
-qqnorm(pres_mFL5_exp3_2st$stepRes[-zero_step])
-hist(pres_mFL5_exp3_2st$stepRes[-zero_step])
+qqnorm(pres_mFL8_exp3_2st$stepRes[-zero_step])
+hist(pres_mFL8_exp3_2st$stepRes[-zero_step])
 # yaw
-qqnorm(pres_mFL5_exp3_2st$yawRes[-zero_step], ylim=c(-pi,pi))
-hist(pres_mFL5_exp3_2st$yawRes[-zero_step])
+qqnorm(pres_mFL8_exp3_2st$yawRes[-zero_step], ylim=c(-pi,pi))
+hist(pres_mFL8_exp3_2st$yawRes[-zero_step])
 # pitch
-qqnorm(pres_mFL5_exp3_2st$pitchRes[-zero_step])
-hist(pres_mFL5_exp3_2st$pitchRes[-zero_step])
+qqnorm(pres_mFL8_exp3_2st$pitchRes[-zero_step])
+hist(pres_mFL8_exp3_2st$pitchRes[-zero_step])
 
 #' 
 #' Plot state probabilities for best model
@@ -692,9 +706,9 @@ alpha.trans <- 0.7
 base_size <- 12
 
 exp3 %>%
-    ggplot() + geom_point(aes(x = X, y = Z, colour = mFL5_2st_TravelProbs)) + 
+    ggplot() + geom_point(aes(x = X, y = Z, colour = mFL8_2st_TravelProbs)) + 
       theme_bw(base_size=base_size) +
-    geom_point(aes(x=flowerx, y=flowerz), colour="orange", shape=flower.shape, size=flower.lm.size) +
+    geom_point(aes(x=Flowerx, y=Flowerz), colour="orange", shape=flower.shape, size=flower.lm.size) +
     geom_point(aes(x=LeftLMx, y=LeftLMz), colour=lmcol, shape=lm.shape, size=flower.lm.size) +
     geom_point(aes(x=RightLMx, y=RightLMz), colour=lmcol, shape=lm.shape, size=flower.lm.size) +
     coord_fixed(ratio=plot_aspect) + 
@@ -704,7 +718,7 @@ exp3 %>%
 #' 
 #' Look at the state probability predictions in 3D
 ## -----------------------------------------------------------------------
-pexp3 <- plot_ly(exp3, x = ~X, y = ~Y, z = ~Z, color = ~mFL5_2st_TravelProbs, 
+pexp3 <- plot_ly(exp3, x = ~X, y = ~Y, z = ~Z, color = ~mFL8_2st_TravelProbs, 
                  mode = 'markers', legendgroup = "data", showlegend=FALSE) %>%
       add_markers() %>%
       colorbar(title="P(Travel)") %>%

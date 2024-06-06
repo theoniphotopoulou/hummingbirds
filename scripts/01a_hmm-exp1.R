@@ -52,6 +52,8 @@ library(here)
 ## -----------------------------------------------------------------------
 exp1data <- read.csv(here::here("data/processed-data_2024.csv")) %>%
   filter(Exp==1) 
+exp1data_OLD <- read.csv(here::here("data/processed-data.csv")) %>%
+  filter(Exp==1) 
 
 names(exp1data)
 dim(exp1data)
@@ -62,9 +64,16 @@ range(exp1data$yaw, na.rm=TRUE)
 range(exp1data$CurrFlowerDist, na.rm=TRUE)
 table(exp1data$LM)
 
+# exp1data_OLD <- exp1data_OLD %>%
+#   mutate(step = step/1000,
+#          CurrFlowerDist = CurrFlowerDist/1000)
+
 exp1data <- exp1data %>%
   mutate(step = step/1000,
-         CurrFlowerDist = CurrFlowerDist/1000) 
+           CurrFlowerDist = CurrFlowerDist/1000) %>%
+  rename(Flowerx = FlowerX,
+         Flowery = FlowerY,
+         Flowerz = FlowerZ)
 
 head(exp1data)
 
@@ -406,12 +415,14 @@ aic_weights_exp1 <- aic_weights %>%
 #' 
 ## -----------------------------------------------------------------------
 save(aic_weights_exp1, file=here("output","exp1_aic_weights.RData"))
-save(mFL_2st, file=here("output","exp1_best_models.RData"))
+save(mFL_estMeanPY_2st, file=here("output","exp1_best_models.RData"))
 
 #' 
 #' ### Describe best model
-#' The model with current distance to flower as covariate on all transitions 
-#' is the best one by far
+#' PREVIOUSLY! The model with current distance to flower as covariate on all transitions 
+#' is the best one by far (99%)
+#' 2024: The model with current distance to flower as a covariate on all transitions, 
+#' and estimation of mean pitch and yaw (mFL_estMeanPY_2st) is the best by far
 
 ## -----------------------------------------------------------------------
 print(mFL_2st)
@@ -494,5 +505,88 @@ pexp1 <- plot_ly(exp1, x = ~X, y = ~Y, z = ~Z, color = ~mFL_2st_TravelProbs,
                scene = list(xaxis = list(title = 'X'),
                          yaxis = list(title = 'Y'),
                          zaxis = list(title = 'Z'))) 
+pexp1
+
+
+
+
+
+
+
+
+
+
+# FOR 2024 BEST MODEL: mFL_estMeanPY_2st
+exp1_mFL_estMeanPY_2st_states <- viterbi(mFL_estMeanPY_2st)
+exp1data$mFL_estMeanPY_2st <- exp1_mFL_estMeanPY_2st_states
+table(exp1data$mFL_estMeanPY_2st)
+mFL_estMeanPY_2st_probs <- stateProbs(mFL_estMeanPY_2st)
+exp1data$mFL_estMeanPY_2st_TravelProbs <- mFL_estMeanPY_2st_probs[,"Travel"]
+
+
+#' 
+#' Check the model fit
+## -----------------------------------------------------------------------
+zero_step <- which(exp1data$step==0)
+
+pres_mFL_exp1_2st <- pseudoRes(mFL_estMeanPY_2st)
+
+# step
+qqnorm(pres_mFL_exp1_2st$stepRes[-zero_step])
+hist(pres_mFL_exp1_2st$stepRes[-zero_step])
+# yaw
+qqnorm(pres_mFL_exp1_2st$yawRes[-zero_step], ylim=c(-pi,pi))
+hist(pres_mFL_exp1_2st$yawRes[-zero_step])
+# pitch
+qqnorm(pres_mFL_exp1_2st$pitchRes[-zero_step])
+hist(pres_mFL_exp1_2st$pitchRes[-zero_step])
+
+#' 
+#' Plot state probabilities for best model
+## -----------------------------------------------------------------------
+
+id <- 11
+
+exp1 <- exp1data %>% filter(ID==id, Exp==1) 
+lmcol <- ifelse(unique(exp1$LM) == "Y", "red", "white")
+plot_aspect <- diff(range(exp1$X))/diff(range(exp1$Z))
+flower.lm.size <- 2.5
+flower.shape <- 8; lm.shape <- 22
+alpha.trans <- 0.7
+base_size <- 12
+
+exp1 %>%
+  ggplot() + geom_point(aes(x = X, y = Z, colour = mFL_estMeanPY_2st_TravelProbs)) +   
+  theme_bw(base_size=base_size) +
+  geom_point(aes(x=Flowerx, y=Flowerz), colour="orange", shape=flower.shape, size=flower.lm.size) +
+  geom_point(aes(x=LeftLMx, y=LeftLMz), colour=lmcol, shape=lm.shape, size=flower.lm.size) +
+  geom_point(aes(x=RightLMx, y=RightLMz), colour=lmcol, shape=lm.shape, size=flower.lm.size) +
+  coord_fixed(ratio=plot_aspect) + 
+  scale_colour_viridis_c(name="State probabilities") +
+  theme(strip.background = element_rect(colour=NA, fill=NA), strip.text.x = element_text(size = 15)) 
+
+#' 
+#' Look at the state probability predictions in 3D
+## -----------------------------------------------------------------------
+pexp1 <- plot_ly(exp1, x = ~X, y = ~Y, z = ~Z, color = ~mFL_estMeanPY_2st_TravelProbs, 
+                 mode = 'markers', legendgroup = "data", showlegend=FALSE) %>%
+  add_markers() %>%
+  colorbar(title="P(Travel)") %>%
+  add_trace(type = 'scatter3d', mode = 'markers', 
+            x = ~LeftLMx, y = ~LeftLMy, z = ~LeftLMz, 
+            marker = list(color = lmcol, symbol = "square"), 
+            name = "Landmarks", legendgroup = "notes", inherit=FALSE, showlegend=TRUE) %>%
+  add_trace(type = 'scatter3d', mode = 'markers', 
+            x = ~RightLMx, y = ~RightLMy, z = ~RightLMz, 
+            marker = list(color = lmcol, symbol = "square"), 
+            name = "Landmarks", showlegend=FALSE, legendgroup = "notes", inherit=FALSE) %>%
+  add_trace(type = 'scatter3d', mode = 'markers', 
+            x = ~Flowerx, y = ~Flowery, z = ~Flowerz, 
+            marker = list(color = "orange", symbol = "asterisk"), name = "Flower", 
+            showlegend=TRUE, legendgroup = "notes", inherit=FALSE) %>%
+  layout(title = "Exp2: Probability of Travel",
+         scene = list(xaxis = list(title = 'X'),
+                      yaxis = list(title = 'Y'),
+                      zaxis = list(title = 'Z'))) 
 pexp1
 

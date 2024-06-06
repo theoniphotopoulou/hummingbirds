@@ -132,15 +132,15 @@ for(state in 1:nbStates) {
   # Get gradient of get_stat function
   dNY <- t(apply(desMatY, 1, function(x)
     grad(get_stat, betaMLE, covs = matrix(x, nrow = 1), nbStates = nbStates, i = state)))
-  
+
   # Standard errors from delta method formula
   #seY <- t(apply(dNY, 1, function(x)
   #  suppressWarnings(sqrt(x%*%Sigma[gamInd[unique(c(m$conditions$betaCons))],gamInd[unique(c(m$conditions$betaCons))]]%*%x))))
   
   seY <- t(apply(dNY, 1, function(x)
     sqrt(x%*%Sigma[gamInd,gamInd]%*%x)))
-  
-  # Lower and upper bounds of confidence interval
+
+    # Lower and upper bounds of confidence interval
   lciY[,state] <- plogis(qlogis(probsY[,state]) - quantSup*seY/(probsY[,state]-probsY[,state]^2))
   uciY[,state] <- plogis(qlogis(probsY[,state]) + quantSup*seY/(probsY[,state]-probsY[,state]^2))
   
@@ -159,8 +159,8 @@ for(state in 1:nbStates) {
 
 #' Create dataframe for landmarks present and landmarks absent, for plotting purposes
 LMYexp1 <- data.frame(CurrFlowerDist=covsY$CurrFlowerDist, 
-                      Search_low=lciY[,1], Search_mle=probsY[,1], Search_upp=uciY[,1],
-                      Travel_low=lciY[,2], Travel_mle=probsY[,2], Travel_upp=uciY[,2])
+                  Search_low=lciY[,1], Search_mle=probsY[,1], Search_upp=uciY[,1],
+                  Travel_low=lciY[,2], Travel_mle=probsY[,2], Travel_upp=uciY[,2])
 
 #######
 save(LMYexp1, file=here("output","exp1_stationary_predata.RData"))
@@ -174,13 +174,13 @@ mycols <- viridis_pal(begin=0.05, end=0.65, option="D")(2)
 ggplot() +
   geom_line(data=LMYexp1, aes(x=CurrFlowerDist, y=Search_mle), colour=viridis(2)[1]) + # purple
   geom_segment(data=LMYexp1, aes(x=CurrFlowerDist, xend=CurrFlowerDist, 
-                                 y=Search_low, yend=Search_upp), colour=viridis(2)[1]) + 
+                             y=Search_low, yend=Search_upp), colour=viridis(2)[1]) + 
   ylim(0,1) + 
   scale_colour_viridis_d(name="Stationary state probabilities (LM = Y)", begin=0.05, end=0.65,
                          labels=c("Search","Travel"), alpha=alpha.trans) +
   geom_line(data=LMYexp1, aes(x=CurrFlowerDist, y=Travel_mle), colour=viridis(2)[2]) + # yellow green
   geom_segment(data=LMYexp1, aes(x=CurrFlowerDist, xend=CurrFlowerDist, 
-                                 y=Travel_low, yend=Travel_upp), colour=viridis(2)[2]) +
+                             y=Travel_low, yend=Travel_upp), colour=viridis(2)[2]) +
   
   theme_bw()
 
@@ -189,11 +189,11 @@ ggplot(LMYexp1) +
   # Search
   geom_line(aes(x=CurrFlowerDist, y=Search_mle, colour="Search")) + 
   geom_ribbon(aes(x=CurrFlowerDist, ymin=Search_low, ymax=Search_upp, 
-                  fill="Search"), alpha=alpha.trans) +
+              fill="Search"), alpha=alpha.trans) +
   # Travel
   geom_line(aes(x=CurrFlowerDist, y=Travel_mle, colour="Travel")) +
   geom_ribbon(aes(x=CurrFlowerDist, ymin=Travel_low, ymax=Travel_upp, 
-                  fill="Travel"), alpha=alpha.trans) +
+              fill="Travel"), alpha=alpha.trans) +
   # Legends
   scale_colour_manual(name="States", values = c("Search" = mycols[1], "Travel" = mycols[2]),
                       labels=c("Search","Travel")) + 
@@ -266,16 +266,14 @@ exp1step_dens <- ggplot(data=data.frame(x=st_dat), aes(x,..density..)) +
 x <- seq(min(exp1data$pitch), max(exp1data$pitch), length=1000)
 FLdist1.5m <- 1.5
 mod$mle$pitch
-mu1_pt <- mod$mle$pitch[1]
 r1_pt <- mod$mle$pitch[2]
-mu2_pt <- mod$mle$pitch[3]
 r2_pt <- mod$mle$pitch[4]
 
 # Work out state-dependent step length densities at a given distance from flower: here 1.5min
 ii 
 # SCALED by proportion of Viterbi decoded states
-r1_pt <- dwrappedcauchy(x, mu = mu1_pt, rho = r1_pt)*m1_vit_prop[1] # mu = circular(0)
-r2_pt <- dwrappedcauchy(x, mu = mu2_pt, rho = r2_pt)*m1_vit_prop[2] # mu = circular(0)
+r1_pt <- dwrappedcauchy(x, mu = circular(0), rho = r1_pt)*m1_vit_prop[1]
+r2_pt <- dwrappedcauchy(x, mu = circular(0), rho = r2_pt)*m1_vit_prop[2]
 
 pmarg_st <- r1_pt + r2_pt
 
@@ -304,7 +302,7 @@ exp1pitch_dens <- ggplot(data=data.frame(x=pt_dat), aes(x,..density..)) +
   #ggtitle("State-Dependent Pitch Angle Densities") +
   theme(legend.position=c(.8, .7)) +
   theme(text=element_text(size=18)) + theme(legend.position = "none"); exp1pitch_dens
-
+  
 
 #' ## STATE-DEPENDENT AND MARGINAL DENSITIES OF YAW ANGLE 
 #' (not scaled by the equilibrium state densities at covariate value = 1.5m)
@@ -313,16 +311,14 @@ exp1pitch_dens <- ggplot(data=data.frame(x=pt_dat), aes(x,..density..)) +
 x <- seq(min(exp1data$yaw), max(exp1data$yaw), length=1000)
 FLdist1.5m <- 1.5
 mod$mle$yaw
-mu1_yw <- mod$mle$yaw[1]
 r1_yw <- mod$mle$yaw[2]
-mu2_yw <- mod$mle$yaw[3]
 r2_yw <- mod$mle$yaw[4]
 
 # Work out state-dependent step length densities at a given distance from flower: here 1.5min
 ii 
 # SCALED by proportion of Viterbi decoded states
-r1_yw <- dwrappedcauchy(x, mu = mu1_yw, rho = r1_yw)*m1_vit_prop[1] # mu = circular(0)
-r2_yw <- dwrappedcauchy(x, mu = mu2_yw, rho = r2_yw)*m1_vit_prop[2] # mu = circular(0)
+r1_yw <- dwrappedcauchy(x, mu = circular(0), rho = r1_yw)*m1_vit_prop[1]
+r2_yw <- dwrappedcauchy(x, mu = circular(0), rho = r2_yw)*m1_vit_prop[2]
 
 ymarg_st <- r1_yw + r2_yw
 
@@ -350,19 +346,19 @@ exp1yaw_dens <- ggplot(data=data.frame(x=yw_dat), aes(x,..density..)) +
   #ylab("Density") + ggtitle("State-Dependent Yaw Angle Densities") +
   theme(legend.position=c(.8, .7)) +
   theme(text=element_text(size=18)) + theme(legend.position = "none");exp1yaw_dens
-
+  
 # plot together
 quartz()
 lay <- matrix(c(1,2,3), ncol=3, nrow=1, byrow = T)
 exp1_statedens <- grid.arrange(exp1step_dens, exp1pitch_dens, exp1yaw_dens, layout_matrix=lay)  
 #plot_grid(exp1step_dens, exp1pitch_dens, exp1yaw_dens, ncol=3)
-#labels = c("Exp1"), label_x=0)
+          #labels = c("Exp1"), label_x=0)
 ggsave(filename=here::here("output","exp1_statedens.jpg"), 
        plot=exp1_statedens,
        width=30, height=10, units="cm",dpi=500)
 
 
-
+  
 
 
 ### 2. Work out confidence intervals for transition probabilities
@@ -422,51 +418,51 @@ uciYgamma <- matrix(NA, lengthout, nbStates*2)
 
 #for(state in 1:nbStates) {
 state <- 1
-# Get gradient of get_gamma function
-# col 1, row 2 of the beta matrix corresponds to transition 2->1
-dNYgamma12 <- t(apply(desMatY, 1, function(x)
-  grad(get_gamma, betaMLE, covs = matrix(x, nrow = 1), nbStates = nbStates, i = state, j = state+1)))
-# col 2, row 1 of the beta matrix corresponds to transition 1->2
-dNYgamma21 <- t(apply(desMatY, 1, function(x)
-  grad(get_gamma, betaMLE, covs = matrix(x, nrow = 1), nbStates = nbStates, i = state+1, j = state)))
+  # Get gradient of get_gamma function
+  # col 1, row 2 of the beta matrix corresponds to transition 2->1
+  dNYgamma12 <- t(apply(desMatY, 1, function(x)
+    grad(get_gamma, betaMLE, covs = matrix(x, nrow = 1), nbStates = nbStates, i = state, j = state+1)))
+  # col 2, row 1 of the beta matrix corresponds to transition 1->2
+  dNYgamma21 <- t(apply(desMatY, 1, function(x)
+    grad(get_gamma, betaMLE, covs = matrix(x, nrow = 1), nbStates = nbStates, i = state+1, j = state)))
+  
+  # Standard errors from delta method formula
+  seYgamma12 <- t(apply(dNYgamma12, 1, function(x)
+    sqrt(x%*%Sigma[gamInd,gamInd]%*%x)))
+  seYgamma21 <- t(apply(dNYgamma21, 1, function(x)
+    sqrt(x%*%Sigma[gamInd,gamInd]%*%x)))
 
-# Standard errors from delta method formula
-seYgamma12 <- t(apply(dNYgamma12, 1, function(x)
-  sqrt(x%*%Sigma[gamInd,gamInd]%*%x)))
-seYgamma21 <- t(apply(dNYgamma21, 1, function(x)
-  sqrt(x%*%Sigma[gamInd,gamInd]%*%x)))
-
-# Lower and upper bounds of confidence interval
-# lower and upper for 1->2 (position [1,2] or element 3 in the tpm)
-lciYgamma[,3] <- plogis(qlogis(tpms[1,2,]) - quantSup*seYgamma12/(tpms[1,2,]-tpms[1,2,]^2))
-uciYgamma[,3] <- plogis(qlogis(tpms[1,2,]) + quantSup*seYgamma12/(tpms[1,2,]-tpms[1,2,]^2))
-# lower and upper for 2->1 (position [2,1] or element 2 in the tpm)
-lciYgamma[,2] <- plogis(qlogis(tpms[2,1,]) - quantSup*seYgamma21/(tpms[2,1,]-tpms[2,1,]^2))
-uciYgamma[,2] <- plogis(qlogis(tpms[2,1,]) + quantSup*seYgamma21/(tpms[2,1,]-tpms[2,1,]^2))
-
+  # Lower and upper bounds of confidence interval
+    # lower and upper for 1->2 (position [1,2] or element 3 in the tpm)
+  lciYgamma[,3] <- plogis(qlogis(tpms[1,2,]) - quantSup*seYgamma12/(tpms[1,2,]-tpms[1,2,]^2))
+  uciYgamma[,3] <- plogis(qlogis(tpms[1,2,]) + quantSup*seYgamma12/(tpms[1,2,]-tpms[1,2,]^2))
+    # lower and upper for 2->1 (position [2,1] or element 2 in the tpm)
+  lciYgamma[,2] <- plogis(qlogis(tpms[2,1,]) - quantSup*seYgamma21/(tpms[2,1,]-tpms[2,1,]^2))
+  uciYgamma[,2] <- plogis(qlogis(tpms[2,1,]) + quantSup*seYgamma21/(tpms[2,1,]-tpms[2,1,]^2))
+  
 
 #' Check it looks ok: Plot state probs and confidence intervals for when landmarks are present
 Trans <- c(3,2)
 pal <- c("firebrick", "royalblue")
 plot(NA, xlim = range(covsY$CurrFlowerDist), ylim = c(0, 1))
 #for(trans in Trans) {
-Trans <- 3 # state transition 1->2
-points(covsY$CurrFlowerDist, tpms[1,2,], type = "l", col = "royalblue")
-points(covsY$CurrFlowerDist, lciYgamma[,Trans], type = "l", lty = 2, col = "royalblue")
-points(covsY$CurrFlowerDist, uciYgamma[,Trans], type = "l", lty = 2, col = "royalblue")
-
-Trans <- 2 # state transition 2->1
-points(covsY$CurrFlowerDist, tpms[2,1,], type = "l", col = "firebrick")
-points(covsY$CurrFlowerDist, lciYgamma[,Trans], type = "l", lty = 2, col = "firebrick")
-points(covsY$CurrFlowerDist, uciYgamma[,Trans], type = "l", lty = 2, col = "firebrick")
+  Trans <- 3 # state transition 1->2
+  points(covsY$CurrFlowerDist, tpms[1,2,], type = "l", col = "royalblue")
+  points(covsY$CurrFlowerDist, lciYgamma[,Trans], type = "l", lty = 2, col = "royalblue")
+  points(covsY$CurrFlowerDist, uciYgamma[,Trans], type = "l", lty = 2, col = "royalblue")
+  
+  Trans <- 2 # state transition 2->1
+  points(covsY$CurrFlowerDist, tpms[2,1,], type = "l", col = "firebrick")
+  points(covsY$CurrFlowerDist, lciYgamma[,Trans], type = "l", lty = 2, col = "firebrick")
+  points(covsY$CurrFlowerDist, uciYgamma[,Trans], type = "l", lty = 2, col = "firebrick")
 #}
 
 #' Create dataframe of transition probability CIs 
 #' for landmarks present and landmarks absent, for plotting purposes
 LMYexp1_gamma <- data.frame(CurrFlowerDist=covsY$CurrFlowerDist, 
-                            Inv_to_Trav_low=lciYgamma[,3], Inv_to_Trav_mle=tpms[1,2,], Inv_to_Trav_upp=uciYgamma[,3],
-                            Trav_to_Inv_low=lciYgamma[,2], Tra_to_Inv_mle=tpms[2,1,], Trav_to_Inv_upp=uciYgamma[,2])
-
+                        Inv_to_Trav_low=lciYgamma[,3], Inv_to_Trav_mle=tpms[1,2,], Inv_to_Trav_upp=uciYgamma[,3],
+                        Trav_to_Inv_low=lciYgamma[,2], Tra_to_Inv_mle=tpms[2,1,], Trav_to_Inv_upp=uciYgamma[,2])
+  
 save(LMYexp1_gamma, file=here("output","exp1_gamma_predata.RData"))
 
 

@@ -60,7 +60,9 @@ library(here)
 #' 
 #' Load the data for experiment two
 ## -----------------------------------------------------------------------
-exp2data <- read.csv(here::here("data/processed-data.csv")) %>%
+exp2data <- read.csv(here::here("data/processed-data_2024.csv")) %>%
+  filter(Exp==2) 
+exp2data_OLD <- read.csv(here::here("data/processed-data.csv")) %>%
   filter(Exp==2) 
 
 names(exp2data)
@@ -75,7 +77,10 @@ table(exp2data$LM)
 exp2data <- exp2data %>%
   mutate(step = step/1000,
          CurrFlowerDist = CurrFlowerDist/1000,
-         LM = factor(LM, levels=c("Y","N"))) 
+         LM = factor(LM, levels=c("Y","N"))) %>%
+  rename(Flowerx = FlowerX,
+         Flowery = FlowerY,
+         Flowerz = FlowerZ)
 
 head(exp2data)
 
@@ -628,11 +633,13 @@ aic_weights_exp2 <- aic_weights %>%
 
 #' 
 #' ### Describe best model
-#' There is one model with an overwhelming amount of support according to the weighted AIC score. 
-#' The model with model support includes landmarks and current distance to flower as interacting 
+#' PREVIOUSLY! and 2024: There is one model with an overwhelming amount of support 
+#' according to the weighted AIC score (91%). The model with model support 
+#' includes landmarks and current distance to flower as interacting 
 #' covariates on the probability of transitioning between states. 
 #' 
-#' If there were landmarks, birds were more likely to be in an searching state, than a travelling state.  
+#' If there were landmarks, birds were more likely to be in an searching state, 
+#' than a travelling state.  
 #' 
 ## -----------------------------------------------------------------------
 save(aic_weights_exp2, file=here("output","exp2_aic_weights.RData"))

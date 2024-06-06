@@ -51,12 +51,12 @@ print(m1)
 m1_CIreal <- CIreal(m1)
 m1_CIbeta <- CIbeta(m1)
 m1_CIreal$step[3:4]
-#     meanInv 0.022-0.024       meanTra 0.121-0.132
-#       sdInv 0.018-0.020         sdTra 0.059-0.067
-# zeromassInv 0.070-0.093   zeromassTra 0.227-0.285
+#     meanInv 0.023-0.025       meanTra 0.122-0.134
+#       sdInv 0.019-0.021         sdTra 0.060-0.068
+# zeromassInv 0.066-0.089   zeromassTra 0.240-0.299
 m1_CIreal$gamma[3:4] # at average covars!
-#  p(1->1) 0.894-0.922   p(1->2) 0.078-0.106
-#  p(2->1) 0.206-0.270   p(2->2) 0.730-0.799
+#  p(1->1) 0.896-0.923   p(1->2) 0.077-0.104
+#  p(2->1) 0.210-0.275   p(2->2) 0.725-0.790
 
 m1_probs <- stateProbs(m1)
 exp1data$m1_TravelProbs <- m1_probs[,"Travel"]
@@ -100,7 +100,7 @@ dmarg_st <- d1_st + d2_st
 # Plot densities for step length, using manual colours or a colour palette like `viridis` or `RColorBrewer`
 st_dat <- exp1data$step
 
-exp1step_dens <- ggplot(data=data.frame(x=st_dat), aes(x,..density..)) + 
+exp1step_dens <- ggplot(data=data.frame(x=st_dat), aes(x,after_stat(density))) + 
   geom_histogram(boundary=0, binwidth=0.01, fill="grey90") + 
   ylim(0,step.ylim) + xlim(0, step.xlim) + theme_bw() + 
   geom_line(data=data.frame(x=x, d1_st=d1_st), aes(x, d1_st, colour="Search"), linewidth=linesize) +
@@ -129,12 +129,14 @@ exp1step_dens <- ggplot(data=data.frame(x=st_dat), aes(x,..density..)) +
 ### State-dependent densities of pitch angle scaled by the equilibrium state densities
 x <- seq(min(exp1data$pitch), max(exp1data$pitch), length=1000)
 mod$mle$pitch
+mu1_pt <- mod$mle$pitch[1]
 r1_pt <- mod$mle$pitch[2]
+mu2_pt <- mod$mle$pitch[3]
 r2_pt <- mod$mle$pitch[4]
 
 # SCALED
-r1_pt <- dwrappedcauchy(x, mu = circular(0), rho = r1_pt)*delta.avg[1]
-r2_pt <- dwrappedcauchy(x, mu = circular(0), rho = r2_pt)*delta.avg[2]
+r1_pt <- dwrappedcauchy(x, mu = mu1_pt, rho = r1_pt)*delta.avg[1] # mu = circular(0)
+r2_pt <- dwrappedcauchy(x, mu = mu2_pt, rho = r2_pt)*delta.avg[2] # mu = circular(0)
 
 pmarg_st <- r1_pt + r2_pt
 
@@ -146,7 +148,7 @@ linesize <- 2
 # Plot densities for step length, using manual colours or a colour palette like `viridis` or `RColorBrewer`
 pt_dat <- exp1data$pitch
 
-exp1pitch_dens <- ggplot(data=data.frame(x=pt_dat), aes(x,..density..)) + 
+exp1pitch_dens <- ggplot(data=data.frame(x=pt_dat), aes(x,after_stat(density))) + 
   geom_histogram(boundary=0, binwidth=0.1, fill="grey90") + ylim(0,angular.ylim) + theme_bw() + 
   geom_line(data=data.frame(x=x, r1_pt=r1_pt), aes(x, r1_pt, colour="Search"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, r2_pt=r2_pt), aes(x, r2_pt, colour="Travel"), linewidth=linesize) +
@@ -173,12 +175,14 @@ exp1pitch_dens <- ggplot(data=data.frame(x=pt_dat), aes(x,..density..)) +
 ### State-dependent densities of pitch angle scaled by the equilibrium state densities
 x <- seq(min(exp1data$yaw), max(exp1data$yaw), length=1000)
 mod$mle$yaw
+mu1_yw <- mod$mle$yaw[1]
 r1_yw <- mod$mle$yaw[2]
+mu2_yw <- mod$mle$yaw[3]
 r2_yw <- mod$mle$yaw[4]
 
 # SCALED
-r1_yw <- dwrappedcauchy(x, mu = circular(0), rho = r1_yw)*delta.avg[1]
-r2_yw <- dwrappedcauchy(x, mu = circular(0), rho = r2_yw)*delta.avg[2]
+r1_yw <- dwrappedcauchy(x, mu = mu1_yw, rho = r1_yw)*delta.avg[1] # mu = circular(0)
+r2_yw <- dwrappedcauchy(x, mu = mu2_yw, rho = r2_yw)*delta.avg[2] # mu = circular(0)
 
 ymarg_st <- r1_yw + r2_yw
 
@@ -190,7 +194,7 @@ linesize <- 2
 # Plot densities for step length, using manual colours or a colour palette like `viridis` or `RColorBrewer`
 yw_dat <- exp1data$yaw
 
-exp1yaw_dens <- ggplot(data=data.frame(x=yw_dat), aes(x,..density..)) + 
+exp1yaw_dens <- ggplot(data=data.frame(x=yw_dat), aes(x,after_stat(density))) + 
   geom_histogram(boundary=0, binwidth=0.1, fill="grey90") + ylim(0,angular.ylim) + theme_bw() + 
   geom_line(data=data.frame(x=x, r1_yw=r1_yw), aes(x, r1_yw, colour="Search"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, r2_yw=r2_yw), aes(x, r2_yw, colour="Travel"), linewidth=linesize) +
@@ -232,7 +236,7 @@ ggsave(filename=here::here("output","exp1_statedens.jpg"),
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Also save a version that can go into composite figure 1 in the manuscript
 
-state_text_x <- c(0.13, 0.26) 
+state_text_x <- c(0.15, 0.26) 
 state_text_y <- c(10, 3.5) 
 state_text_size <- 8
 state_lab_text_size <- 18
@@ -290,12 +294,14 @@ exp1step_dens_simple <- ggplot(data=data.frame(x=st_dat), aes(x,..density..)) +
 ### State-dependent densities of pitch angle scaled by the equilibrium state densities
 x <- seq(min(exp1data$pitch), max(exp1data$pitch), length=1000)
 mod$mle$pitch
+mu1_pt <- mod$mle$pitch[1]
 r1_pt <- mod$mle$pitch[2]
+mu2_pt <- mod$mle$pitch[3]
 r2_pt <- mod$mle$pitch[4]
 
 # SCALED
-r1_pt <- dwrappedcauchy(x, mu = circular(0), rho = r1_pt)*delta.avg[1]
-r2_pt <- dwrappedcauchy(x, mu = circular(0), rho = r2_pt)*delta.avg[2]
+r1_pt <- dwrappedcauchy(x, mu = mu1_pt, rho = r1_pt)*delta.avg[1] # mu = circular(0)
+r2_pt <- dwrappedcauchy(x, mu = mu2_pt, rho = r2_pt)*delta.avg[2] # mu = circular(0)
 
 pmarg_st <- r1_pt + r2_pt
 
@@ -333,12 +339,14 @@ exp1pitch_dens_simple <- ggplot(data=data.frame(x=pt_dat), aes(x,..density..)) +
 ### State-dependent densities of pitch angle scaled by the equilibrium state densities
 x <- seq(min(exp1data$yaw), max(exp1data$yaw), length=1000)
 mod$mle$yaw
+mu1_yw <- mod$mle$yaw[1]
 r1_yw <- mod$mle$yaw[2]
+mu2_yw <- mod$mle$yaw[3]
 r2_yw <- mod$mle$yaw[4]
 
 # SCALED
-r1_yw <- dwrappedcauchy(x, mu = circular(0), rho = r1_yw)*delta.avg[1]
-r2_yw <- dwrappedcauchy(x, mu = circular(0), rho = r2_yw)*delta.avg[2]
+r1_yw <- dwrappedcauchy(x, mu = mu1_yw, rho = r1_yw)*delta.avg[1] # mu = circular(0)
+r2_yw <- dwrappedcauchy(x, mu = mu2_yw, rho = r2_yw)*delta.avg[2] # mu = circular(0)
 
 ymarg_st <- r1_yw + r2_yw
 

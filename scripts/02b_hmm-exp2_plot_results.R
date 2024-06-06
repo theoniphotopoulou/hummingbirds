@@ -73,10 +73,10 @@ exp2vit_states <- data.frame(all=as.numeric(table(exp2data$viterbi_states)/lengt
            LMN=as.numeric(table(LMN_vit)/nrow(LMN_vit)),
            LMY_prop_all=as.numeric(table(LMY_vit)/nrow(exp2data)),
            LMN_prop_all=as.numeric(table(LMN_vit)/nrow(exp2data))
-            )
-# all         LMY       LMN          LMY_prop_all LMN_prop_all
-# 1 0.5982867 0.6812321 0.4574209    0.4287647    0.1695221
-# 2 0.4017133 0.3187679 0.5425791    0.2006312    0.2010821
+           ); exp2vit_states
+# all       LMY LMN LMY_prop_all LMN_prop_all
+# 1 0.6262399 0.7005731 0.5    0.4409378    0.1853021
+# 2 0.3737601 0.2994269 0.5    0.1884581    0.1853021
 
 plot(m2, ask=TRUE, breaks=50, plotCI=TRUE, covs=data.frame(CurrFlowerDist=1.5, LM="Y"))
 covs <- data.frame(CurrFlowerDist=1.5, LM="N")
@@ -84,12 +84,12 @@ plotStationary(m2, plotCI=TRUE, covs=covs)
 mFL8_CIreal <- CIreal(m2)
 mFL8_CIbeta <- CIbeta(m2)
 mFL8_CIreal$step[3:4]
-#     meanInv 0.017-0.020       meanTra 0.107-0.118
-#       sdInv 0.014-0.017         sdTra 0.061-0.069
-# zeromassInv 0.091-0.130   zeromassTra 0.102-0.153
+#     meanInv 0.020-0.023       meanTra 0.113-0.125
+#       sdInv 0.017-0.020         sdTra 0.063-0.072
+# zeromassInv 0.078-0.113   zeromassTra 0.126-0.182
 mFL8_CIreal$gamma[3:4] # at average covars!
-#  p(1->1) 0.808-0.893   p(1->2) 0.106-0.192
-#  p(2->1) 0.097-0.170   p(2->2) 0.830-0.903
+#  p(1->1) 0.812-0.894   p(1->2) 0.106-0.188
+#  p(2->1) 0.110-0.189   p(2->2) 0.811-0.890
 
 m <- m2
 
@@ -315,7 +315,7 @@ linesize <- 2
 # Plot densities for step length, using manual colours or a colour palette like `viridis` or `RColorBrewer`
 st_dat <- exp2data$step
 
-exp2step_dens <- ggplot(data=data.frame(x=st_dat), aes(x,..density..)) + 
+exp2step_dens <- ggplot(data=data.frame(x=st_dat), aes(x,after_stat(density))) + 
   geom_histogram(boundary=0, binwidth=0.01, fill="grey90") + ylim(0,45) + theme_bw() + 
   geom_line(data=data.frame(x=x, d1_st=d1_st), aes(x, d1_st, colour="Search"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, d2_st=d2_st), aes(x, d2_st, colour="Travel"), linewidth=linesize) +
@@ -360,7 +360,7 @@ linesize <- 2
 # Plot densities for step length, using manual colours or a colour palette like `viridis` or `RColorBrewer`
 pt_dat <- exp2data$pitch
 
-exp2pitch_dens <- ggplot(data=data.frame(x=pt_dat), aes(x,..density..)) + 
+exp2pitch_dens <- ggplot(data=data.frame(x=pt_dat), aes(x,after_stat(density))) + 
   geom_histogram(boundary=0, binwidth=0.1, fill="grey90") + ylim(0,6.5) + theme_bw() + 
   geom_line(data=data.frame(x=x, r1_pt=r1_pt), aes(x, r1_pt, colour="Search"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, r2_pt=r2_pt), aes(x, r2_pt, colour="Travel"), linewidth=linesize) +
@@ -404,7 +404,7 @@ linesize <- 2
 # Plot densities for step length, using manual colours or a colour palette like `viridis` or `RColorBrewer`
 yw_dat <- exp2data$yaw
 
-exp2yaw_dens <- ggplot(data=data.frame(x=yw_dat), aes(x,..density..)) + 
+exp2yaw_dens <- ggplot(data=data.frame(x=yw_dat), aes(x,after_stat(density))) + 
   geom_histogram(boundary=0, binwidth=0.1, fill="grey90") + ylim(0,6.5) + theme_bw() + 
   geom_line(data=data.frame(x=x, r1_yw=r1_yw), aes(x, r1_yw, colour="Search"), linewidth=linesize) +
   geom_line(data=data.frame(x=x, r2_yw=r2_yw), aes(x, r2_yw, colour="Travel"), linewidth=linesize) +

@@ -47,6 +47,7 @@ idm_exp1 <- foreach(i=indivs) %do% {
          Par0 = list(step = exp1pars$Par$step, 
                      yaw = exp1pars$Par$yaw, 
                      pitch = exp1pars$Par$pitch),
+         estAngleMean = list(yaw = TRUE, pitch = TRUE),
          formula = exp1formula,
          stateNames = stateNames)
 }
