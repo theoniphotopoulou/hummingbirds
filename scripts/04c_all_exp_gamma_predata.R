@@ -10,5 +10,10 @@ ls()
 
 save(LMYexp1_gamma, 
      LMYexp2_gamma, LMNexp2_gamma,
-     LMYNexp3_gamma,
+     LMYexp3_gamma, LMNexp3_gamma,
      file=here("output","all_exp_gamma_predata.RData"))
+
+# save(LMYexp1_gamma, 
+#      LMYexp2_gamma, LMNexp2_gamma,
+#      LMYNexp3_gamma,
+#      file=here("output","all_exp_gamma_predata.RData"))

@@ -106,13 +106,13 @@ exp1m <- exp1_gmax
 exp1_CIreal <- CIreal(exp1m)
 #exp1_CIbeta <- CIbeta(exp1m)
 exp1_CIreal$step[3:4]
-#     meanInv 0.022-0.024       meanTra 0.121-0.132
-#       sdInv 0.018-0.020         sdTra 0.059-0.067
-# zeromassInv 0.070-0.093   zeromassTra 0.223-0.285
+#     meanInv 0.023-0.025       meanTra 0.122-0.134
+#       sdInv 0.019-0.021         sdTra 0.060-0.068
+# zeromassInv 0.067-0.089   zeromassTra 0.240-0.300
 exp1_CIreal$yaw[3:4]
-#     concInv 0.562-0.605       concTra 0.943-0.955
+#     concInv 0.248-0.310       concTra 0.926-0.942
 exp1_CIreal$pitch[3:4]
-#     concInv 0.390-0.441       concTra 0.917-0.936
+#     concInv 0.786-0.807       concTra 0.959-0.967
 
 # State probabilities
 exp1_probs <- stateProbs(exp1m)
@@ -124,7 +124,7 @@ exp1_pdat$viterbi <- viterbi(exp1m)
 # Proportion of records labelled as each state
 exp1_vit_prop <- as.numeric(table(viterbi(exp1m))/length(viterbi(exp1m))); exp1_vit_prop
 #   Search    Travel
-#   0.7012286 0.2987714
+#   0.7078214 0.2921786
 head(exp1_pdat)
 # ~~~~~~~~~~~~~~~~~~~~~ EXPERIMENT 1 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -133,13 +133,13 @@ exp2m <- exp2_gmax
 exp2_CIreal <- CIreal(exp2m)
 #exp2_CIbeta <- CIbeta(exp2m)
 exp2_CIreal$step[3:4]
-#     meanInv 0.017-0.020       meanTra 0.107-0.118
-#       sdInv 0.014-0.017         sdTra 0.061-0.069
-# zeromassInv 0.091-0.130   zeromassTra 0.102-0.153
+#     meanInv 0.020-0.023       meanTra 0.113-0.125
+#       sdInv 0.017-0.020         sdTra 0.063-0.072
+# zeromassInv 0.078-0.113   zeromassTra 0.126-0.183
 exp2_CIreal$yaw[3:4]
-#     concInv 0.541-0.605       concTra 0.897-0.916
+#     concInv 0.300-0.383       concTra 0.923-0.942
 exp2_CIreal$pitch[3:4]
-#     concInv 0.433-0.499       concTra 0.893-0.915
+#     concInv 0.790-0.817       concTra 0.944-0.955
 
 # State probabilities
 exp2_probs <- stateProbs(exp2m)
@@ -151,26 +151,26 @@ exp2_pdat$viterbi <- viterbi(exp2m)
 # Proportion of records labelled as each state
 exp2_vit_prop <- as.numeric(table(viterbi(exp2m))/length(viterbi(exp2m))); exp2_vit_prop
 #   Search    Travel
-#   0.5982867 0.4017133
+#   0.7005731 0.2994269 
 exp2_pdat %>% filter(LM=="Y") %>% 
-  select(viterbi) %>% table()/nrow(exp2_pdat %>% filter(LM=="Y")) # [1] 0.6812321 0.3187679 
+  select(viterbi) %>% table()/nrow(exp2_pdat %>% filter(LM=="Y")) # [1] 0.7005731 0.2994269 
 exp2_pdat %>% filter(LM=="N") %>% 
-  select(viterbi) %>% table()/nrow(exp2_pdat %>% filter(LM=="N")) # [1] 0.4574209 0.5425791
+  select(viterbi) %>% table()/nrow(exp2_pdat %>% filter(LM=="N")) # [1] 0.5 0.5
 head(exp2_pdat)
 # ~~~~~~~~~~~~~~~~~~~~~ EXPERIMENT 2 ~~~~~~~~~~~~~~~~~~~~~
-
+# START HERE 15/10/2024
 # ~~~~~~~~~~~~~~~~~~~~~ EXPERIMENT 3 ~~~~~~~~~~~~~~~~~~~~~
 exp3m <- exp3_gmax
 exp3_CIreal <- CIreal(exp3m)
 #exp3_CIbeta <- CIbeta(exp3m)
 exp3_CIreal$step[3:4]
-#     meanInv 0.016-0.019       meanTra 0.120-0.133
-#       sdInv 0.014-0.017         sdTra 0.056-0.064
-# zeromassInv 0.079-0.121   zeromassTra 0.173-0.231
+#     meanInv 0.024-0.032       meanTra 0.127-0.144
+#       sdInv 0.023-0.032         sdTra 0.058-0.068
+# zeromassInv 0.065-0.100   zeromassTra 0.219-0.303
 exp3_CIreal$yaw[3:4]
-#     concInv 0.467-0.548       concTra 0.915-0.932
+#     concInv 0.298-0.413       concTra 0.942-0.965
 exp3_CIreal$pitch[3:4]
-#     concInv 0.402-0.481       concTra 0.906-0.926
+#     concInv 0.786-0.817       concTra 0.955-0.970
 
 # State probabilities
 exp3_probs <- stateProbs(exp3m)
@@ -182,11 +182,11 @@ exp3_pdat$viterbi <- viterbi(exp3m)
 # Proportion of records labelled as each state
 exp3_vit_prop <- as.numeric(table(viterbi(exp3m))/length(viterbi(exp3m))); exp3_vit_prop
 #   Investigate   Travel
-#   0.5956175     0.4043825
+#   0.6384439     0.3615561
 exp3_pdat %>% filter(LM=="Y") %>% 
-  select(viterbi) %>% table()/nrow(exp3_pdat %>% filter(LM=="Y")) # [1] 0.5956175 0.4043825
+  select(viterbi) %>% table()/nrow(exp3_pdat %>% filter(LM=="Y")) # [1] 0.7430279 0.2569721 
 exp3_pdat %>% filter(LM=="N") %>% 
-  select(viterbi) %>% table()/nrow(exp3_pdat %>% filter(LM=="N")) # [1] 0.4206989 0.5793011
+  select(viterbi) %>% table()/nrow(exp3_pdat %>% filter(LM=="N")) # [1] 0.4973118 0.5026882 
 head(exp3_pdat)
 # ~~~~~~~~~~~~~~~~~~~~~ EXPERIMENT 3 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -233,7 +233,7 @@ obsdist_exp2 %in% exp2_Fdist
 source(here::here("functions","find_closest_dist.R"))
 find_closest_dist(obsdist=obsdist_exp2,distvector=exp2_Fdist)
 
-# map over rows of the exp1data dataframe
+# map over rows of the exp2data dataframe
 tprobs_dist_exp2 <- map(.x = exp2data$CurrFlowerDist, .f=find_closest_dist, distvector=exp2_Fdist) %>% unlist()
 length(tprobs_dist_exp2)
 nrow(exp2data)
@@ -251,15 +251,16 @@ exp2data <- test_exp2
 
 
 # ~~~~~~~~~~~~~~~~~~~~~ EXPERIMENT 3 ~~~~~~~~~~~~~~~~~~~~~
-head(LMYNexp3_gamma)
-exp3_Fdist <- LMYNexp3_gamma$CurrFlowerDist
+# NEW
+head(LMYexp3_gamma)
+exp3_Fdist <- LMYexp3_gamma$CurrFlowerDist
 obsdist_exp3 <- exp3data[1,"CurrFlowerDist"]
 obsdist_exp3 %in% exp3_Fdist
 
 source(here::here("functions","find_closest_dist.R"))
 find_closest_dist(obsdist=obsdist_exp3,distvector=exp3_Fdist)
 
-# map over rows of the exp1data dataframe
+# map over rows of the exp3data dataframe
 tprobs_dist_exp3 <- map(.x = exp3data$CurrFlowerDist, .f=find_closest_dist, distvector=exp3_Fdist) %>% unlist()
 length(tprobs_dist_exp3)
 nrow(exp3data)
@@ -270,9 +271,33 @@ head(exp3data)
 
 # join the dataframe with the transition probabilities at regular distances 
 # to the observed, irrefular distances
-LMYNexp3_gamma <- LMYNexp3_gamma %>% rename(tprobs_dist=CurrFlowerDist)
-test_exp3 <- left_join(exp3data, LMYNexp3_gamma, by="tprobs_dist")
+LMYexp3_gamma <- LMYexp3_gamma %>% rename(tprobs_dist=CurrFlowerDist)
+test_exp3 <- left_join(exp3data, LMYexp3_gamma, by="tprobs_dist")
 exp3data <- test_exp3
+
+# OLD
+# head(LMYNexp3_gamma)
+# exp3_Fdist <- LMYNexp3_gamma$CurrFlowerDist
+# obsdist_exp3 <- exp3data[1,"CurrFlowerDist"]
+# obsdist_exp3 %in% exp3_Fdist
+# 
+# source(here::here("functions","find_closest_dist.R"))
+# find_closest_dist(obsdist=obsdist_exp3,distvector=exp3_Fdist)
+# 
+# # map over rows of the exp1data dataframe
+# tprobs_dist_exp3 <- map(.x = exp3data$CurrFlowerDist, .f=find_closest_dist, distvector=exp3_Fdist) %>% unlist()
+# length(tprobs_dist_exp3)
+# nrow(exp3data)
+# 
+# # create a new column with the nearest regular distance
+# exp3data <- exp3data %>% mutate(tprobs_dist = tprobs_dist_exp3)
+# head(exp3data)
+# 
+# # join the dataframe with the transition probabilities at regular distances 
+# # to the observed, irrefular distances
+# LMYNexp3_gamma <- LMYNexp3_gamma %>% rename(tprobs_dist=CurrFlowerDist)
+# test_exp3 <- left_join(exp3data, LMYNexp3_gamma, by="tprobs_dist")
+# exp3data <- test_exp3
 # ~~~~~~~~~~~~~~~~~~~~~ EXPERIMENT 3 ~~~~~~~~~~~~~~~~~~~~~
 
 

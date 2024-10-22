@@ -114,7 +114,7 @@ Yexp2 <- ggplot(LMYexp2) +
   theme_bw(base_size = 20) + theme(legend.position="none") 
 
 #' Exp3 - N 
-Nexp3 <- ggplot(LMYNexp3) +
+Nexp3 <- ggplot(LMNexp3) +
   # Search
   geom_line(aes(x=CurrFlowerDist, y=Search_mle, colour="Search")) + 
   geom_ribbon(aes(x=CurrFlowerDist, ymin=Search_low, ymax=Search_upp, 
@@ -136,7 +136,7 @@ Nexp3 <- ggplot(LMYNexp3) +
   theme_bw(base_size = 20) + theme(legend.position="none") 
 
 #' Exp3 - Y
-Yexp3 <- ggplot(LMYNexp3) +
+Yexp3 <- ggplot(LMYexp3) +
   # Search
   geom_line(aes(x=CurrFlowerDist, y=Search_mle, colour="Search")) + 
   geom_ribbon(aes(x=CurrFlowerDist, ymin=Search_low, ymax=Search_upp, 
@@ -156,6 +156,51 @@ Yexp3 <- ggplot(LMYNexp3) +
   #xlab("Current distance to flower (m)") + 
   #ylab("Stationary state probability") + 
   theme_bw(base_size = 20) + theme(legend.position="none") 
+
+# Exp3 - OLD
+#' #' Exp3 - N 
+#' Nexp3 <- ggplot(LMYNexp3) +
+#'   # Search
+#'   geom_line(aes(x=CurrFlowerDist, y=Search_mle, colour="Search")) + 
+#'   geom_ribbon(aes(x=CurrFlowerDist, ymin=Search_low, ymax=Search_upp, 
+#'                   fill="Search"), alpha=alpha.trans) +
+#'   # Travel
+#'   geom_line(aes(x=CurrFlowerDist, y=Travel_mle, colour="Travel")) +
+#'   geom_ribbon(aes(x=CurrFlowerDist, ymin=Travel_low, ymax=Travel_upp, 
+#'                   fill="Travel"), alpha=alpha.trans) +
+#'   # Legends
+#'   scale_colour_manual(name="States", values = c("Search" = mycols[1], "Travel" = mycols[2]),
+#'                       labels=c("Search","Travel")) + 
+#'   scale_fill_manual(name="States", values = c("Search" = mycols[1], "Travel" = mycols[2]),
+#'                     labels=c("Search","Travel")) +
+#'   ylim(0,1) + 
+#'   xlim(0,6) +
+#'   xlab("") + ylab("") +
+#'   #xlab("Current distance to flower (m)") + 
+#'   #ylab("Stationary state probability") + 
+#'   theme_bw(base_size = 20) + theme(legend.position="none") 
+#' 
+#' #' Exp3 - Y
+#' Yexp3 <- ggplot(LMYNexp3) +
+#'   # Search
+#'   geom_line(aes(x=CurrFlowerDist, y=Search_mle, colour="Search")) + 
+#'   geom_ribbon(aes(x=CurrFlowerDist, ymin=Search_low, ymax=Search_upp, 
+#'                   fill="Search"), alpha=alpha.trans) +
+#'   # Travel
+#'   geom_line(aes(x=CurrFlowerDist, y=Travel_mle, colour="Travel")) +
+#'   geom_ribbon(aes(x=CurrFlowerDist, ymin=Travel_low, ymax=Travel_upp, 
+#'                   fill="Travel"), alpha=alpha.trans) +
+#'   # Legends
+#'   scale_colour_manual(name="States", values = c("Search" = mycols[1], "Travel" = mycols[2]),
+#'                       labels=c("Search","Travel")) + 
+#'   scale_fill_manual(name="States", values = c("Search" = mycols[1], "Travel" = mycols[2]),
+#'                     labels=c("Search","Travel")) +
+#'   ylim(0,1) + 
+#'   xlim(0,6) +
+#'   xlab("") + ylab("") +
+#'   #xlab("Current distance to flower (m)") + 
+#'   #ylab("Stationary state probability") + 
+#'   theme_bw(base_size = 20) + theme(legend.position="none") 
 
 # create experiment labels
 Exp1_lab <- ggdraw() + draw_label("Exp 1", x = 0.6, y = 0.6,
@@ -236,26 +281,32 @@ exp_comp <- ggplot() +
   # Search
   geom_line(data=LMYexp1, aes(x=CurrFlowerDist, y=Search_mle, colour="Exp1", linetype="Inv"), size=2) + 
   geom_line(data=LMYexp2, aes(x=CurrFlowerDist, y=Search_mle, colour="Exp2", linetype="Inv"), size=2) + 
-  geom_line(data=LMYNexp3, aes(x=CurrFlowerDist, y=Search_mle, colour="Exp3", linetype="Inv"), size=2) + 
+  geom_line(data=LMYexp3, aes(x=CurrFlowerDist, y=Search_mle, colour="Exp3", linetype="Inv"), size=2) + 
+  #  geom_line(data=LMYNexp3, aes(x=CurrFlowerDist, y=Search_mle, colour="Exp3", linetype="Inv"), size=2) + 
 
   geom_ribbon(data=LMYexp1, aes(x=CurrFlowerDist, ymin=Search_low, ymax=Search_upp, 
                    fill="Exp1"), alpha=alpha.trans) +
   geom_ribbon(data=LMYexp2, aes(x=CurrFlowerDist, ymin=Search_low, ymax=Search_upp, 
                    fill="Exp2"), alpha=alpha.trans) +
-  geom_ribbon(data=LMYNexp3, aes(x=CurrFlowerDist, ymin=Search_low, ymax=Search_upp, 
-                   fill="Exp3"), alpha=alpha.trans) +
+  geom_ribbon(data=LMYexp3, aes(x=CurrFlowerDist, ymin=Search_low, ymax=Search_upp, 
+                                fill="Exp3"), alpha=alpha.trans) +
+  # geom_ribbon(data=LMYNexp3, aes(x=CurrFlowerDist, ymin=Search_low, ymax=Search_upp, 
+  #                  fill="Exp3"), alpha=alpha.trans) +
   
   # Travel
   geom_line(data=LMYexp1, aes(x=CurrFlowerDist, y=Travel_mle, colour="Exp1", linetype="Tra"), size=2) +
   geom_line(data=LMYexp2, aes(x=CurrFlowerDist, y=Travel_mle, colour="Exp2", linetype="Tra"), size=2) +
-  geom_line(data=LMYNexp3, aes(x=CurrFlowerDist, y=Travel_mle, colour="Exp3", linetype="Tra"), size=2) +
+  geom_line(data=LMYexp3, aes(x=CurrFlowerDist, y=Travel_mle, colour="Exp3", linetype="Tra"), size=2) +
+  #  geom_line(data=LMYNexp3, aes(x=CurrFlowerDist, y=Travel_mle, colour="Exp3", linetype="Tra"), size=2) +
   
   geom_ribbon(data=LMYexp1, aes(x=CurrFlowerDist, ymin=Travel_low, ymax=Travel_upp, 
                    fill="Exp1"), alpha=alpha.trans) +
   geom_ribbon(data=LMYexp2, aes(x=CurrFlowerDist, ymin=Travel_low, ymax=Travel_upp, 
                   fill="Exp2"), alpha=alpha.trans) +
-  geom_ribbon(data=LMYNexp3, aes(x=CurrFlowerDist, ymin=Travel_low, ymax=Travel_upp, 
-                  fill="Exp3"), alpha=alpha.trans) +
+  geom_ribbon(data=LMYexp3, aes(x=CurrFlowerDist, ymin=Travel_low, ymax=Travel_upp, 
+                                fill="Exp3"), alpha=alpha.trans) +
+  # geom_ribbon(data=LMYNexp3, aes(x=CurrFlowerDist, ymin=Travel_low, ymax=Travel_upp, 
+  #                 fill="Exp3"), alpha=alpha.trans) +
   
   # Legends
   scale_colour_manual(name="Experiment", values = c("Exp1" = myexpcols[1], 
