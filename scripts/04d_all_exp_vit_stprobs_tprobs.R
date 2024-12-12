@@ -151,14 +151,14 @@ exp2_pdat$viterbi <- viterbi(exp2m)
 # Proportion of records labelled as each state
 exp2_vit_prop <- as.numeric(table(viterbi(exp2m))/length(viterbi(exp2m))); exp2_vit_prop
 #   Search    Travel
-#   0.7005731 0.2994269 
+#   0.6262399 0.3737601 26/11/2024 
 exp2_pdat %>% filter(LM=="Y") %>% 
   select(viterbi) %>% table()/nrow(exp2_pdat %>% filter(LM=="Y")) # [1] 0.7005731 0.2994269 
 exp2_pdat %>% filter(LM=="N") %>% 
   select(viterbi) %>% table()/nrow(exp2_pdat %>% filter(LM=="N")) # [1] 0.5 0.5
 head(exp2_pdat)
 # ~~~~~~~~~~~~~~~~~~~~~ EXPERIMENT 2 ~~~~~~~~~~~~~~~~~~~~~
-# START HERE 15/10/2024
+
 # ~~~~~~~~~~~~~~~~~~~~~ EXPERIMENT 3 ~~~~~~~~~~~~~~~~~~~~~
 exp3m <- exp3_gmax
 exp3_CIreal <- CIreal(exp3m)

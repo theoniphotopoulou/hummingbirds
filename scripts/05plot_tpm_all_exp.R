@@ -16,15 +16,16 @@ load(here("output","all_exp_gamma_predata.RData"))
 # IN SEPARATE PLOTS WITH CONFIDENCE INTERVALS
 
 alpha.trans <- 0.2
-mycols <- viridis_pal(begin=0.05, end=0.65, option="D")(2)
+mycols <- viridis_pal(begin=0.05, end=0.65, option="D")(2) 
+# mycols[1] is purple, mycols[2] is green
 
 #' Exp1 - Y
 Yexp1_withLeg <- ggplot(LMYexp1_gamma) +
-  # Search -> Travel
+  # Search -> Travel (purple)
   geom_line(aes(x=CurrFlowerDist, y=Inv_to_Trav_mle, colour="Search -> Travel")) + 
   geom_ribbon(aes(x=CurrFlowerDist, ymin=Inv_to_Trav_low, ymax=Inv_to_Trav_upp, 
                   fill="Search -> Travel"), alpha=alpha.trans) +
-  # Travel -> Search
+  # Travel -> Search (green)
   geom_line(aes(x=CurrFlowerDist, y=Tra_to_Inv_mle, colour="Travel -> Search")) +
   geom_ribbon(aes(x=CurrFlowerDist, ymin=Trav_to_Inv_low, ymax=Trav_to_Inv_upp, 
                   fill="Travel -> Search"), alpha=alpha.trans) +
@@ -130,7 +131,7 @@ Yexp2 <- ggplot(LMYexp2_gamma) +
   theme_bw(base_size = 20) + theme(legend.position="none") 
 
 #' Exp3 - N 
-YNexp3 <- ggplot(LMYNexp3_gamma) +
+Nexp3 <- ggplot(LMNexp3_gamma) +
   # Search -> Travel
   geom_line(aes(x=CurrFlowerDist, y=Inv_to_Trav_mle, colour="Search -> Travel")) + 
   geom_ribbon(aes(x=CurrFlowerDist, ymin=Inv_to_Trav_low, ymax=Inv_to_Trav_upp, 
@@ -141,11 +142,11 @@ YNexp3 <- ggplot(LMYNexp3_gamma) +
                   fill="Travel -> Search"), alpha=alpha.trans) +
   # Legends
   scale_colour_manual(name="Transitions", values = c("Travel -> Search" = mycols[2],
-                                                "Search -> Travel" = mycols[1]), 
+                                                     "Search -> Travel" = mycols[1]), 
                       labels=c(expression("Travel" %->% "Search"),
                                expression("Search" %->% "Travel"))) + 
   scale_fill_manual(name="Transitions", values = c("Travel -> Search" = mycols[2],
-                                              "Search -> Travel" = mycols[1]),
+                                                   "Search -> Travel" = mycols[1]),
                     labels=c(expression("Travel" %->% "Search"),
                              expression("Search" %->% "Travel"))) +
   ylim(0,1) + 
@@ -156,7 +157,7 @@ YNexp3 <- ggplot(LMYNexp3_gamma) +
   theme_bw(base_size = 20) + theme(legend.position="none") 
 
 #' Exp3 - Y
-YNexp3.1 <- ggplot(LMYNexp3_gamma) +
+Yexp3 <- ggplot(LMYexp3_gamma) +
   # Search -> Travel
   geom_line(aes(x=CurrFlowerDist, y=Inv_to_Trav_mle, colour="Search -> Travel")) + 
   geom_ribbon(aes(x=CurrFlowerDist, ymin=Inv_to_Trav_low, ymax=Inv_to_Trav_upp, 
@@ -167,11 +168,11 @@ YNexp3.1 <- ggplot(LMYNexp3_gamma) +
                   fill="Travel -> Search"), alpha=alpha.trans) +
   # Legends
   scale_colour_manual(name="Transitions", values = c("Travel -> Search" = mycols[2],
-                                                "Search -> Travel" = mycols[1]), 
+                                                     "Search -> Travel" = mycols[1]), 
                       labels=c(expression("Travel" %->% "Search"),
                                expression("Search" %->% "Travel"))) + 
   scale_fill_manual(name="Transitions", values = c("Travel -> Search" = mycols[2],
-                                              "Search -> Travel" = mycols[1]),
+                                                   "Search -> Travel" = mycols[1]),
                     labels=c(expression("Travel" %->% "Search"),
                              expression("Search" %->% "Travel"))) +
   ylim(0,1) + 
@@ -180,6 +181,63 @@ YNexp3.1 <- ggplot(LMYNexp3_gamma) +
   #xlab("Current distance to flower (m)") + 
   #ylab("Stationary state probability") + 
   theme_bw(base_size = 20) + theme(legend.position="none") 
+
+
+
+
+
+# Exp 3 OLD
+#' #' Exp3 - N 
+#' YNexp3 <- ggplot(LMYNexp3_gamma) +
+#'   # Search -> Travel
+#'   geom_line(aes(x=CurrFlowerDist, y=Inv_to_Trav_mle, colour="Search -> Travel")) + 
+#'   geom_ribbon(aes(x=CurrFlowerDist, ymin=Inv_to_Trav_low, ymax=Inv_to_Trav_upp, 
+#'                   fill="Search -> Travel"), alpha=alpha.trans) +
+#'   # Travel -> Search
+#'   geom_line(aes(x=CurrFlowerDist, y=Tra_to_Inv_mle, colour="Travel -> Search")) +
+#'   geom_ribbon(aes(x=CurrFlowerDist, ymin=Trav_to_Inv_low, ymax=Trav_to_Inv_upp, 
+#'                   fill="Travel -> Search"), alpha=alpha.trans) +
+#'   # Legends
+#'   scale_colour_manual(name="Transitions", values = c("Travel -> Search" = mycols[2],
+#'                                                 "Search -> Travel" = mycols[1]), 
+#'                       labels=c(expression("Travel" %->% "Search"),
+#'                                expression("Search" %->% "Travel"))) + 
+#'   scale_fill_manual(name="Transitions", values = c("Travel -> Search" = mycols[2],
+#'                                               "Search -> Travel" = mycols[1]),
+#'                     labels=c(expression("Travel" %->% "Search"),
+#'                              expression("Search" %->% "Travel"))) +
+#'   ylim(0,1) + 
+#'   xlim(0,6) +
+#'   xlab("") + ylab("") +
+#'   #xlab("Current distance to flower (m)") + 
+#'   #ylab("Stationary state probability") + 
+#'   theme_bw(base_size = 20) + theme(legend.position="none") 
+#' 
+#' #' Exp3 - Y
+#' YNexp3.1 <- ggplot(LMYNexp3_gamma) +
+#'   # Search -> Travel
+#'   geom_line(aes(x=CurrFlowerDist, y=Inv_to_Trav_mle, colour="Search -> Travel")) + 
+#'   geom_ribbon(aes(x=CurrFlowerDist, ymin=Inv_to_Trav_low, ymax=Inv_to_Trav_upp, 
+#'                   fill="Search -> Travel"), alpha=alpha.trans) +
+#'   # Travel -> Search
+#'   geom_line(aes(x=CurrFlowerDist, y=Tra_to_Inv_mle, colour="Travel -> Search")) +
+#'   geom_ribbon(aes(x=CurrFlowerDist, ymin=Trav_to_Inv_low, ymax=Trav_to_Inv_upp, 
+#'                   fill="Travel -> Search"), alpha=alpha.trans) +
+#'   # Legends
+#'   scale_colour_manual(name="Transitions", values = c("Travel -> Search" = mycols[2],
+#'                                                 "Search -> Travel" = mycols[1]), 
+#'                       labels=c(expression("Travel" %->% "Search"),
+#'                                expression("Search" %->% "Travel"))) + 
+#'   scale_fill_manual(name="Transitions", values = c("Travel -> Search" = mycols[2],
+#'                                               "Search -> Travel" = mycols[1]),
+#'                     labels=c(expression("Travel" %->% "Search"),
+#'                              expression("Search" %->% "Travel"))) +
+#'   ylim(0,1) + 
+#'   xlim(0,6) +
+#'   xlab("") + ylab("") +
+#'   #xlab("Current distance to flower (m)") + 
+#'   #ylab("Stationary state probability") + 
+#'   theme_bw(base_size = 20) + theme(legend.position="none") 
 
 # create experiment labels
 Exp1_lab <- ggdraw() + draw_label("Exp 1", x = 0.6, y = 0.6,
@@ -207,7 +265,8 @@ lay <- rbind(c(1,1,1,2,2,2,3),
 
 comp_plot <- grid.arrange(Yexp1, Leg_plot, Exp1_lab,
                           Yexp2, Nexp2, Exp2_lab,
-                          YNexp3, YNexp3.1, Exp3_lab, 
+                          Yexp3, Nexp3, Exp3_lab,
+#                          YNexp3, YNexp3.1, Exp3_lab, 
                           layout_matrix=lay)
 
 #' Title plot
@@ -219,7 +278,8 @@ Title_plot2 <- ggdraw() + draw_text("Landmarks absent", x = 1, y = 0.5,
 comp_plot <- grid.arrange(Title_plot1, Title_plot2, nullGrob(),
                           Yexp1, Leg_plot, Exp1_lab,
                           Yexp2, Nexp2, Exp2_lab,
-                          YNexp3, YNexp3.1, Exp3_lab, 
+                          Yexp3, Nexp3, Exp3_lab,
+#                          YNexp3, YNexp3.1, Exp3_lab, 
                           layout_matrix=lay)
 
 comp_plotL <- grid.arrange(arrangeGrob(comp_plot, left = y.lab, bottom = x.lab))                         
@@ -231,7 +291,7 @@ ggsave(filename=here::here("figures","exp_vs_landmarks_tpm_new.jpg"),
        width=30, height=20, units="cm",dpi=700)
 
 
-
+# START HERE 26/11/2024 !! Exp3 needs the individual models to be run
 
 # PLOT * INDIVIDUAL * TRANSITION PROBABILITIES FROM ALL EXPERIMENTS TOGETHER 
 # IN SEPARATE PLOTS WITH CONFIDENCE INTERVALS

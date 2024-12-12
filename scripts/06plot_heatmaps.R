@@ -22,7 +22,7 @@ source("functions/makeGrid.R")
 # which means the first bout of searching in view of the camera containing stops.
 # State probabilities added by Theoni Photopoulou
 
-load("data/all_exp_vit_stProbs.RData")
+load("output/all_exp_vit_stProbs.RData")
 
 
 #-----------------------------------------------------------------------
