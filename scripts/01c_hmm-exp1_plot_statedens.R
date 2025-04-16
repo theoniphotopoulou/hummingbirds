@@ -69,10 +69,12 @@ mod <- m1
 # Define colours and other plotting parameters
 alpha.trans <- 0.2
 mycols <- viridis_pal(begin=0.05, end=0.65, option="D")(2)
-state.cols <- c(mycols, "#B8DE29FF") 
+state.cols <- c(mycols, "#B8DE29FF")  # viridis palette
+mycols <- brewer.pal(n=3, name="YlOrRd")[c(3,2)] # red/yellow palette
+state.cols <- c(mycols, "grey50")  
 linesize <- 2
 text_size <- 16
-exp_text_loc <- c(0.4, 34)
+exp_text_loc <- c(0.4, 30)
 exp_text_size <- 8
 angular.ylim <- 3
 step.ylim <- 35
@@ -115,8 +117,8 @@ exp1step_dens <- ggplot(data=data.frame(x=st_dat), aes(x,after_stat(density))) +
   
   #xlab("3D step length (m)") + ylab("Density") + 
   xlab("") + ylab("") +
-  geom_text(aes(x=exp_text_loc[1], y=exp_text_loc[2], label="Experiment 1"), size=exp_text_size) +
-  theme(legend.position=c(.45, .5),
+  geom_text(aes(x=exp_text_loc[1], y=exp_text_loc[2], label="Experiment 1\n Single trial"), size=exp_text_size) +
+  theme(legend.position=c(.65, .3),
         text=element_text(size=text_size),
         axis.text.x=element_blank(),
         panel.grid.major=element_blank(),
@@ -142,7 +144,7 @@ pmarg_st <- r1_pt + r2_pt
 
 # Define colour using a palette
 #brew.cols <- brewer.pal(3, "Accent")
-state.cols <- c(mycols, "#B8DE29FF") 
+#state.cols <- c(mycols, "#B8DE29FF") 
 linesize <- 2
 
 # Plot densities for step length, using manual colours or a colour palette like `viridis` or `RColorBrewer`
@@ -188,7 +190,7 @@ ymarg_st <- r1_yw + r2_yw
 
 # Define colour using a palette
 #brew.cols <- brewer.pal(3, "Accent")
-state.cols <- c(mycols, "#B8DE29FF") 
+#state.cols <- c(mycols, "#B8DE29FF") 
 linesize <- 2
 
 # Plot densities for step length, using manual colours or a colour palette like `viridis` or `RColorBrewer`
@@ -222,7 +224,7 @@ exp1_statedens <- grid.arrange(exp1step_dens, exp1pitch_dens, exp1yaw_dens, layo
 
 # Save both as a file and as an image
 save(exp1_statedens, file=here("output","exp1_statedens_file.Rdata"))
-ggsave(filename=here::here("output","exp1_statedens.jpg"), 
+ggsave(filename=here::here("figures","exp1_statedens.jpg"), 
        plot=exp1_statedens,
        width=30, height=10, units="cm",dpi=500)
 
@@ -307,7 +309,7 @@ pmarg_st <- r1_pt + r2_pt
 
 # Define colour using a palette
 #brew.cols <- brewer.pal(3, "Accent")
-state.cols <- c(mycols, "#B8DE29FF") 
+#state.cols <- c(mycols, "#B8DE29FF") 
 linesize <- 2
 
 # Plot densities for step length, using manual colours or a colour palette like `viridis` or `RColorBrewer`
@@ -352,7 +354,7 @@ ymarg_st <- r1_yw + r2_yw
 
 # Define colour using a palette
 #brew.cols <- brewer.pal(3, "Accent")
-state.cols <- c(mycols, "#B8DE29FF") 
+#state.cols <- c(mycols, "#B8DE29FF") 
 linesize <- 2
 
 # Plot densities for step length, using manual colours or a colour palette like `viridis` or `RColorBrewer`
@@ -385,6 +387,6 @@ exp1_statedens_simple <- grid.arrange(exp1step_dens_simple,
                                exp1yaw_dens_simple, layout_matrix=lay)  
 
 # save as an image
-ggsave(filename=here::here("output","exp1_statedens_simple.jpg"), 
+ggsave(filename=here::here("figures","exp1_statedens_simple.jpg"), 
        plot=exp1_statedens_simple,
        width=30, height=10, units="cm",dpi=500)

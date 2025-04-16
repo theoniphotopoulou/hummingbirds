@@ -429,11 +429,23 @@ dNYgamma12 <- t(apply(desMatY, 1, function(x)
 # col 2, row 1 of the beta matrix corresponds to transition 1->2
 dNYgamma21 <- t(apply(desMatY, 1, function(x)
   grad(get_gamma, betaMLE, covs = matrix(x, nrow = 1), nbStates = nbStates, i = state+1, j = state)))
+# col 1, row 1 of the beta matrix corresponds to transition 1->1
+dNYgamma11 <- t(apply(desMatY, 1, function(x)
+  grad(get_gamma, betaMLE, covs = matrix(x, nrow = 1), nbStates = nbStates, i = state, j = state)))
+state <- 2
+# col 2, row 2 of the beta matrix corresponds to transition 2->2
+dNYgamma22 <- t(apply(desMatY, 1, function(x)
+  grad(get_gamma, betaMLE, covs = matrix(x, nrow = 1), nbStates = nbStates, i = state, j = state)))
+
 
 # Standard errors from delta method formula
 seYgamma12 <- t(apply(dNYgamma12, 1, function(x)
   sqrt(x%*%Sigma[gamInd,gamInd]%*%x)))
 seYgamma21 <- t(apply(dNYgamma21, 1, function(x)
+  sqrt(x%*%Sigma[gamInd,gamInd]%*%x)))
+seYgamma22 <- t(apply(dNYgamma22, 1, function(x)
+  sqrt(x%*%Sigma[gamInd,gamInd]%*%x)))
+seYgamma11 <- t(apply(dNYgamma11, 1, function(x)
   sqrt(x%*%Sigma[gamInd,gamInd]%*%x)))
 
 # Lower and upper bounds of confidence interval
@@ -443,12 +455,19 @@ uciYgamma[,3] <- plogis(qlogis(tpms[1,2,]) + quantSup*seYgamma12/(tpms[1,2,]-tpm
 # lower and upper for 2->1 (position [2,1] or element 2 in the tpm)
 lciYgamma[,2] <- plogis(qlogis(tpms[2,1,]) - quantSup*seYgamma21/(tpms[2,1,]-tpms[2,1,]^2))
 uciYgamma[,2] <- plogis(qlogis(tpms[2,1,]) + quantSup*seYgamma21/(tpms[2,1,]-tpms[2,1,]^2))
-
+# lower and upper for 1->1 (position [1,1] or element 1 in the tpm)
+lciYgamma[,1] <- plogis(qlogis(tpms[1,1,]) - quantSup*seYgamma11/(tpms[1,1,]-tpms[1,1,]^2))
+uciYgamma[,1] <- plogis(qlogis(tpms[1,1,]) + quantSup*seYgamma11/(tpms[1,1,]-tpms[1,1,]^2))
+# lower and upper for 2->2 (position [2,2] or element 4 in the tpm)
+lciYgamma[,4] <- plogis(qlogis(tpms[2,2,]) - quantSup*seYgamma22/(tpms[2,2,]-tpms[2,2,]^2))
+uciYgamma[,4] <- plogis(qlogis(tpms[2,2,]) + quantSup*seYgamma22/(tpms[2,2,]-tpms[2,2,]^2))
 
 #' Check it looks ok: Plot state probs and confidence intervals for when landmarks are present
-Trans <- c(3,2)
+Trans <- c(3,2,1,4)
 pal <- c("firebrick", "royalblue")
-plot(NA, xlim = range(covsY$CurrFlowerDist), ylim = c(0, 1))
+plot(NA, xlim = range(covsY$CurrFlowerDist), ylim = c(0, 1), 
+     xlab="Distance to flower",
+     ylab="State switching probability")
 #for(trans in Trans) {
 Trans <- 3 # state transition 1->2
 points(covsY$CurrFlowerDist, tpms[1,2,], type = "l", col = "royalblue")
@@ -459,13 +478,26 @@ Trans <- 2 # state transition 2->1
 points(covsY$CurrFlowerDist, tpms[2,1,], type = "l", col = "firebrick")
 points(covsY$CurrFlowerDist, lciYgamma[,Trans], type = "l", lty = 2, col = "firebrick")
 points(covsY$CurrFlowerDist, uciYgamma[,Trans], type = "l", lty = 2, col = "firebrick")
+
+Trans <- 1 # state transition 1->1
+points(covsY$CurrFlowerDist, tpms[1,1,], type = "l", col = "seagreen")
+points(covsY$CurrFlowerDist, lciYgamma[,Trans], type = "l", lty = 2, col = "seagreen")
+points(covsY$CurrFlowerDist, uciYgamma[,Trans], type = "l", lty = 2, col = "seagreen")
+
+Trans <- 4 # state transition 2->2
+points(covsY$CurrFlowerDist, tpms[2,2,], type = "l", col = "gold")
+points(covsY$CurrFlowerDist, lciYgamma[,Trans], type = "l", lty = 2, col = "gold")
+points(covsY$CurrFlowerDist, uciYgamma[,Trans], type = "l", lty = 2, col = "gold")
+
 #}
 
 #' Create dataframe of transition probability CIs 
 #' for landmarks present and landmarks absent, for plotting purposes
 LMYexp1_gamma <- data.frame(CurrFlowerDist=covsY$CurrFlowerDist, 
                             Inv_to_Trav_low=lciYgamma[,3], Inv_to_Trav_mle=tpms[1,2,], Inv_to_Trav_upp=uciYgamma[,3],
-                            Trav_to_Inv_low=lciYgamma[,2], Tra_to_Inv_mle=tpms[2,1,], Trav_to_Inv_upp=uciYgamma[,2])
+                            Inv_to_Inv_low=lciYgamma[,1], Inv_to_Inv_mle=tpms[1,1,], Inv_to_Inv_upp=uciYgamma[,1],
+                            Trav_to_Inv_low=lciYgamma[,2], Tra_to_Inv_mle=tpms[2,1,], Trav_to_Inv_upp=uciYgamma[,2],
+                            Trav_to_Trav_low=lciYgamma[,4], Trav_to_Trav_mle=tpms[2,2,], Trav_to_Trav_upp=uciYgamma[,4])
 
 save(LMYexp1_gamma, file=here("output","exp1_gamma_predata.RData"))
 

@@ -31,7 +31,7 @@ comp_dens_plot <- grid.arrange(arrangeGrob(comp_dens), left = y.lab)
 
 #quartz(); grid.draw(comp_dens_plot)
 
-ggsave(filename=here::here("output","allexp_statedens.jpg"), 
+ggsave(filename=here::here("figures","allexp_statedens.jpg"), 
        plot=comp_dens_plot,
        width=35, height=30, units="cm",dpi=700)
 

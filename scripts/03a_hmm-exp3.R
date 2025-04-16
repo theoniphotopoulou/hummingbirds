@@ -688,7 +688,7 @@ qqnorm(pres_mFL8_exp3_2st$yawRes[-zero_step], ylim=c(-pi,pi))
 hist(pres_mFL8_exp3_2st$yawRes[-zero_step])
 # pitch
 qqnorm(pres_mFL8_exp3_2st$pitchRes[-zero_step])
-hist(pres_mFL8_exp3_2st$pitchRes[-zero_step])
+hist(pres_mFL8_exp3_2st$pitchRes[-zero_step], breaks=10)
 
 #' 
 #' Plot state probabilities for best model

@@ -420,25 +420,25 @@ save(mFL_estMeanPY_2st, file=here("output","exp1_best_models.RData"))
 #' 
 #' ### Describe best model
 #' PREVIOUSLY! The model with current distance to flower as covariate on all transitions 
-#' is the best one by far (99%)
+#' is the best one by far (99%) - mFL_2st
 #' 2024: The model with current distance to flower as a covariate on all transitions, 
 #' and estimation of mean pitch and yaw (mFL_estMeanPY_2st) is the best by far
 
 ## -----------------------------------------------------------------------
-print(mFL_2st)
-plotStationary(mFL_2st, plotCI=TRUE)
-CIreal(mFL_2st)
-CIbeta(mFL_2st)
+print(mFL_estMeanPY_2st)
+plotStationary(mFL_estMeanPY_2st, plotCI=TRUE)
+CIreal(mFL_estMeanPY_2st)
+CIbeta(mFL_estMeanPY_2st)
 
 
 #' Viterbi decoded states (most likely state sequence)  
 #' and State probabilities
 ## -----------------------------------------------------------------------
-exp1_mFL_2st_states <- viterbi(mFL_2st)
-exp1data$mFL_2st <- exp1_mFL_2st_states
-table(exp1data$mFL_2st)
-mFL_2st_probs <- stateProbs(mFL_2st)
-exp1data$mFL_2st_TravelProbs <- mFL_2st_probs[,"Travel"]
+exp1_mFL_estMeanPY_2st_states <- viterbi(mFL_estMeanPY_2st)
+exp1data$mFL_estMeanPY_2st <- exp1_mFL_estMeanPY_2st_states
+table(exp1data$mFL_estMeanPY_2st)
+mFL_estMeanPY_2st_probs <- stateProbs(mFL_estMeanPY_2st)
+exp1data$mFL_estMeanPY_2st_TravelProbs <- mFL_estMeanPY_2st_probs[,"Travel"]
 
 
 #' 
@@ -446,17 +446,17 @@ exp1data$mFL_2st_TravelProbs <- mFL_2st_probs[,"Travel"]
 ## -----------------------------------------------------------------------
 zero_step <- which(exp1data$step==0)
 
-pres_mFL_exp1_2st <- pseudoRes(mFL_2st)
+pres_mFL_estMeanPY_2st <- pseudoRes(mFL_estMeanPY_2st)
 
 # step
-qqnorm(pres_mFL_exp1_2st$stepRes[-zero_step])
-hist(pres_mFL_exp1_2st$stepRes[-zero_step])
+qqnorm(pres_mFL_estMeanPY_2st$stepRes[-zero_step])
+hist(pres_mFL_estMeanPY_2st$stepRes[-zero_step])
 # yaw
-qqnorm(pres_mFL_exp1_2st$yawRes[-zero_step], ylim=c(-pi,pi))
-hist(pres_mFL_exp1_2st$yawRes[-zero_step])
+qqnorm(pres_mFL_estMeanPY_2st$yawRes[-zero_step], ylim=c(-pi,pi))
+hist(pres_mFL_estMeanPY_2st$yawRes[-zero_step])
 # pitch
-qqnorm(pres_mFL_exp1_2st$pitchRes[-zero_step])
-hist(pres_mFL_exp1_2st$pitchRes[-zero_step])
+qqnorm(pres_mFL_estMeanPY_2st$pitchRes[-zero_step])
+hist(pres_mFL_estMeanPY_2st$pitchRes[-zero_step])
 
 #' 
 #' Plot state probabilities for best model

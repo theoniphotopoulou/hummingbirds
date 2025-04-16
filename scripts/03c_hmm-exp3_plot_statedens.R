@@ -74,9 +74,11 @@ mod <- m3
 alpha.trans <- 0.2
 mycols <- viridis_pal(begin=0.05, end=0.65, option="D")(2)
 state.cols <- c(mycols, "#B8DE29FF") 
+mycols <- brewer.pal(n=3, name="YlOrRd")[c(3,2)] # red/yellow palette
+state.cols <- c(mycols, "grey50")  
 linesize <- 2
 text_size <- 16
-exp_text_loc <- c(0.4, 34)
+exp_text_loc <- c(0.4, 30)
 exp_text_size <- 8
 angular.ylim <- 3
 step.ylim <- 35
@@ -118,15 +120,15 @@ exp3step_dens <- ggplot(data=data.frame(x=st_dat), aes(x,after_stat(density))) +
   scale_linetype_manual(name="Densities", values=c("Search" = 3, "Travel" = 3, "Marginal"=1)) +
   
   #xlab("3D step length (m)") + ylab("Density") + 
-  xlab("") + ylab("") +
-  geom_text(aes(x=exp_text_loc[1], y=exp_text_loc[2], label="Experiment 3"), size=exp_text_size) +
+  xlab("3D step length (m)") + ylab("") +
+  geom_text(aes(x=exp_text_loc[1], y=exp_text_loc[2], label="Experiment 3\n 12 additional trials"), size=exp_text_size) +
   theme(legend.position="none",
         text=element_text(size=text_size),
         axis.text.x=element_blank(),
         panel.grid.major=element_blank(),
         panel.grid.minor=element_blank(),
+        #plot.margin = unit(c(t = 0, r = 1, b = 1, l = 1), "cm")); exp3step_dens
         plot.margin = unit(c(t = 0, r = 1, b = 1, l = 1), "cm")); exp3step_dens
-
 
 #' ## STATE-DEPENDENT AND MARGINAL DENSITIES OF PITCH ANGLE 
 
@@ -144,7 +146,7 @@ pmarg_st <- r1_pt + r2_pt
 
 # Define colour using a palette
 #brew.cols <- brewer.pal(3, "Accent")
-state.cols <- c(mycols, "#B8DE29FF") 
+#state.cols <- c(mycols, "#B8DE29FF") 
 linesize <- 2
 
 # Plot densities for step length, using manual colours or a colour palette like `viridis` or `RColorBrewer`
@@ -163,7 +165,7 @@ exp3pitch_dens <- ggplot(data=data.frame(x=pt_dat), aes(x,after_stat(density))) 
   scale_linetype_manual(name="Densities", values=c("Search" = 3, "Travel" = 3, "Marginal"=1)) +
   
   #xlab("Pitch angle (radians)") + 
-  xlab("") + ylab("") +
+  xlab("Pitch angle (radians)") + ylab("") +
   #ggtitle("State-Dependent Pitch Angle Densities") +
   theme(legend.position="none",
         text=element_text(size=text_size),
@@ -189,7 +191,7 @@ ymarg_st <- r1_yw + r2_yw
 
 # Define colour using a palette
 #brew.cols <- brewer.pal(3, "Accent")
-state.cols <- c(mycols, "#B8DE29FF") 
+#state.cols <- c(mycols, "#B8DE29FF") 
 linesize <- 2
 
 # Plot densities for step length, using manual colours or a colour palette like `viridis` or `RColorBrewer`
@@ -208,7 +210,7 @@ exp3yaw_dens <- ggplot(data=data.frame(x=yw_dat), aes(x,after_stat(density))) +
   scale_linetype_manual(name="Densities", values=c("Search" = 3, "Travel" = 3, "Marginal"=1)) +
   
   #xlab("Yaw angle (radians)") + 
-  xlab("") + ylab("") +
+  xlab("Yaw angle (radians)") + ylab("") +
   #ylab("Density") + ggtitle("State-Dependent Yaw Angle Densities") +
   theme(legend.position="none",
         text=element_text(size=text_size),
@@ -224,7 +226,7 @@ exp3_statedens <- grid.arrange(exp3step_dens, exp3pitch_dens, exp3yaw_dens, layo
 
 # Save both as a file and as an image
 save(exp3_statedens, file=here("output","exp3_statedens_file.Rdata"))
-ggsave(filename=here::here("output","exp3_statedens.jpg"), 
+ggsave(filename=here::here("figures","exp3_statedens.jpg"), 
        plot=exp3_statedens,
        width=30, height=10, units="cm",dpi=500)
 
