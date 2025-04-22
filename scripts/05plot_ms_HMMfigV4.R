@@ -367,30 +367,30 @@ Yexp1_Transitions <- ggplot(LMYexp1_gamma) +
         axis.text.x = element_blank(), plot.margin = unit(c(t = 1.4, r = 1, b = -0.4, l = 1), "cm")); Yexp1_Transitions
 
 ######### Exp 2 (landmarks present)
-exp3Y.TrIn.ind.low25 <- which(LMYexp3_gamma$Trav_to_Inv_low==find_closest_dist(0.25, LMYexp3_gamma$Trav_to_Inv_low))
-exp3Y.TrIn.ind.mle25 <- which(LMYexp3_gamma$Tra_to_Inv_mle==find_closest_dist(0.25, LMYexp3_gamma$Tra_to_Inv_mle))
-exp3Y.TrIn.ind.upp25 <- which(LMYexp3_gamma$Trav_to_Inv_upp==find_closest_dist(0.25, LMYexp3_gamma$Trav_to_Inv_upp))
-paste0("Distance from the flower at MLE transition probability to Search 0.25 is ", round(LMYexp3_gamma$CurrFlowerDist[exp3Y.TrIn.ind.mle25], digits=2), 
-       " (95percent CI:", round(LMYexp3_gamma$CurrFlowerDist[exp3Y.TrIn.ind.low25], digits=2), "-", round(LMYexp3_gamma$CurrFlowerDist[exp3Y.TrIn.ind.upp25], digits=2), ")")
+exp2Y.TrIn.ind.low25 <- which(LMYexp2_gamma$Trav_to_Inv_low==find_closest_dist(0.25, LMYexp2_gamma$Trav_to_Inv_low))
+exp2Y.TrIn.ind.mle25 <- which(LMYexp2_gamma$Tra_to_Inv_mle==find_closest_dist(0.25, LMYexp2_gamma$Tra_to_Inv_mle))
+exp2Y.TrIn.ind.upp25 <- which(LMYexp2_gamma$Trav_to_Inv_upp==find_closest_dist(0.25, LMYexp2_gamma$Trav_to_Inv_upp))
+paste0("Distance from the flower at MLE transition probability to Search 0.25 is ", round(LMYexp2_gamma$CurrFlowerDist[exp2Y.TrIn.ind.mle25], digits=2), 
+       " (95percent CI:", round(LMYexp2_gamma$CurrFlowerDist[exp2Y.TrIn.ind.low25], digits=2), "-", round(LMYexp2_gamma$CurrFlowerDist[exp2Y.TrIn.ind.upp25], digits=2), ")")
 
-exp3Y.InTr.ind.low25 <- which(LMYexp3_gamma$Inv_to_Trav_low==find_closest_dist(0.25, LMYexp3_gamma$Inv_to_Trav_low))
-exp3Y.InTr.ind.mle25 <- which(LMYexp3_gamma$Inv_to_Trav_mle==find_closest_dist(0.25, LMYexp3_gamma$Inv_to_Trav_mle))
-exp3Y.InTr.ind.upp25 <- which(LMYexp3_gamma$Inv_to_Trav_upp==find_closest_dist(0.25, LMYexp3_gamma$Inv_to_Trav_upp))
-paste0("Distance from the flower at MLE transition probability to Travel 0.25 is ", round(LMYexp3_gamma$CurrFlowerDist[exp3Y.InTr.ind.mle25], digits=2), 
-       " (95percent CI:", round(LMYexp3_gamma$CurrFlowerDist[exp3Y.InTr.ind.low25], digits=2), "-", round(LMYexp3_gamma$CurrFlowerDist[exp3Y.InTr.ind.upp25], digits=2), ")")
+exp2Y.InTr.ind.low25 <- which(LMYexp2_gamma$Inv_to_Trav_low==find_closest_dist(0.25, LMYexp2_gamma$Inv_to_Trav_low))
+exp2Y.InTr.ind.mle25 <- which(LMYexp2_gamma$Inv_to_Trav_mle==find_closest_dist(0.25, LMYexp2_gamma$Inv_to_Trav_mle))
+exp2Y.InTr.ind.upp25 <- which(LMYexp2_gamma$Inv_to_Trav_upp==find_closest_dist(0.25, LMYexp2_gamma$Inv_to_Trav_upp))
+paste0("Distance from the flower at MLE transition probability to Travel 0.25 is ", round(LMYexp2_gamma$CurrFlowerDist[exp2Y.InTr.ind.mle25], digits=2), 
+       " (95percent CI:", round(LMYexp2_gamma$CurrFlowerDist[exp2Y.InTr.ind.low25], digits=2), "-", round(LMYexp2_gamma$CurrFlowerDist[exp2Y.InTr.ind.upp25], digits=2), ")")
 
-#' Exp3 transitions - no legend
-Yexp3_Transitions <- ggplot(LMYexp3_gamma) +
+#' Exp2 transitions - no legend
+Yexp2_Transitions <- ggplot(LMYexp2_gamma) +
   # Trav-Inv Segment
-  geom_segment(aes(x=CurrFlowerDist[exp3Y.TrIn.ind.low25], xend=CurrFlowerDist[exp3Y.TrIn.ind.upp25], 
+  geom_segment(aes(x=CurrFlowerDist[exp2Y.TrIn.ind.low25], xend=CurrFlowerDist[exp2Y.TrIn.ind.upp25], 
                    y=-0.03, yend=-0.03), colour=mycols_lmy[1], lineend = "square", size=me.size) + # or "linen" or "seashell"
-  geom_vline(aes(xintercept=CurrFlowerDist[exp3Y.TrIn.ind.mle25]), 
+  geom_vline(aes(xintercept=CurrFlowerDist[exp2Y.TrIn.ind.mle25]), 
              colour=mycols_lmy[1], linetype = vline.type) + 
   
   # Inv-Trav Segment
-  geom_segment(aes(x=CurrFlowerDist[exp3Y.InTr.ind.low25], xend=CurrFlowerDist[exp3Y.InTr.ind.upp25], 
+  geom_segment(aes(x=CurrFlowerDist[exp2Y.InTr.ind.low25], xend=CurrFlowerDist[exp2Y.InTr.ind.upp25], 
                 y=-0.03, yend=-0.03), colour=mycols_lmy[2], lineend = "square", size=me.size) + # or "linen" or "seashell"
-  geom_vline(aes(xintercept=CurrFlowerDist[exp3Y.InTr.ind.mle25]), 
+  geom_vline(aes(xintercept=CurrFlowerDist[exp2Y.InTr.ind.mle25]), 
              colour=mycols_lmy[2], linetype = vline.type) + 
   
   # Travel -> Search
@@ -429,11 +429,11 @@ Yexp3_Transitions <- ggplot(LMYexp3_gamma) +
   theme(legend.position = "none", 
         panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         axis.ticks.length.x=unit(-0.25, "cm"),
-        axis.text.x = element_blank(), plot.margin = unit(c(t = -0.2, r = 1, b = 1.2, l = 1), "cm")); Yexp3_Transitions
+        axis.text.x = element_blank(), plot.margin = unit(c(t = -0.2, r = 1, b = 1.2, l = 1), "cm")); Yexp2_Transitions
 
 ######### Exp 2 (landmarks Removed)
-#' Exp3 transitions - no legend
-Nexp3_Transitions <- ggplot(LMNexp3_gamma) +
+#' Exp2 transitions - no legend
+Nexp2_Transitions <- ggplot(LMNexp2_gamma) +
   
   # Travel -> Search
   geom_line(aes(x=CurrFlowerDist, y=Tra_to_Inv_mle, colour="Travel -> Search"), size=me.size) +
@@ -477,7 +477,7 @@ Nexp3_Transitions <- ggplot(LMNexp3_gamma) +
   theme(legend.position = "none", 
         panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         axis.ticks.length.x=unit(-0.25, "cm"),
-        axis.text.x = element_blank(), plot.margin = unit(c(t = -0.2, r = 2.7, b = 1.2, l = -0.7), "cm")); Nexp3_Transitions
+        axis.text.x = element_blank(), plot.margin = unit(c(t = -0.2, r = 2.7, b = 1.2, l = -0.7), "cm")); Nexp2_Transitions
 
 
 ######### Exp 3 
@@ -744,7 +744,7 @@ lay <- rbind(c(1,1,1,2,2,2),
 
 compTrans <- grid.arrange(Present_lab, Removed_lab,
                           Yexp1_Transitions, nullGrob(),
-                          Yexp3_Transitions, Nexp3_Transitions, 
+                          Yexp2_Transitions, Nexp2_Transitions, 
                           Yexp3_Transitions, Nexp3_Transitions, 
                           # YNexp3_Transitions, YNexp3_Transitions1,
                           layout_matrix=lay)
@@ -752,6 +752,10 @@ compTrans <- grid.arrange(Present_lab, Removed_lab,
 compTrans_plot <- grid.arrange(arrangeGrob(compTrans), bottom = x.lab, left = y.lab)                          
 
 #quartz(); grid.draw(compTrans_plot)
+
+ggsave(filename=here::here("figures","allexp_Trans_newTEST.jpg"),
+       plot=compTrans_plot,
+       width=40, height=32, units="cm",dpi=700)
 
 ggsave(filename=here::here("figures","allexp_Trans_new.jpg"), 
        plot=compTrans_plot,
@@ -1331,6 +1335,18 @@ graphics.off()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+ 
 
 
 

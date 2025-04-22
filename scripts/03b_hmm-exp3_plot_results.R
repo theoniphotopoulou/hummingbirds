@@ -460,10 +460,18 @@ m$mle$beta
 betamat <- matrix(m$mle$beta, ncol=2)
 
 # LM=N
-for(i in 1:lengthout) {
+# for(i in 1:lengthout) {
+#   gammaN <- diag(nbStates)
+#   gammaN[!gammaN] <- exp(betamat[1,] + betamat[2,]*covsN[i,2])
+#   tpmsN[,,i] <- t(gammaN/apply(gammaN, 1, sum))
+# }
+for(i in 1:lengthout) { 
   gammaN <- diag(nbStates)
-  gammaN[!gammaN] <- exp(betamat[1,] + betamat[2,]*covsN[i,2])
-  tpmsN[,,i] <- t(gammaN/apply(gammaN, 1, sum))
+  #gamma2 <- diag(nbStates)
+  #gamma[!gamma] <- exp(betamat[,1] + betamat[,2]*covsYvec[i])
+  gammaN[2,1] <- exp(betamat[1,2] + betamat[2,2]*covsN[i,2]) # 1->2
+  gammaN[1,2] <- exp(betamat[1,1] + betamat[2,1]*covsN[i,2]) # 2->1
+  tpmsN[,,i] <- (gammaN/apply(gammaN, 1, sum)) 
 }
 # tpm at covar min and LMN
 tpmsN[,,1]
@@ -471,12 +479,19 @@ tpmsN[,,1]
 tpmsN[,,dim(tpmsN)[3]]
 
 # LM=Y
-for(i in 1:lengthout) {
+# for(i in 1:lengthout) {
+#   gammaY <- diag(nbStates)
+#   gammaY[!gammaY] <- exp(betamat[1,] + betamat[2,]*covsY[i,1] + betamat[3,]*covsY[i,2] + betamat[4,]*covsY[i,3])
+#   tpmsY[,,i] <- t(gammaY/apply(gammaY, 1, sum))
+# }
+for(i in 1:lengthout) { 
   gammaY <- diag(nbStates)
-  gammaY[!gammaY] <- exp(betamat[1,] + betamat[2,]*covsY[i,1] + betamat[3,]*covsY[i,2] + betamat[4,]*covsY[i,3])
-  tpmsY[,,i] <- t(gammaY/apply(gammaY, 1, sum))
+  #gamma2 <- diag(nbStates)
+  #gamma[!gamma] <- exp(betamat[,1] + betamat[,2]*covsYvec[i])
+  gammaY[2,1] <- exp(betamat[1,2] + betamat[2,2]*covsY[i,1] + betamat[3,2]*covsY[i,2] + betamat[4,2]*covsY[i,3]) # 1->2
+  gammaY[1,2] <- exp(betamat[1,1] + betamat[2,1]*covsY[i,1] + betamat[3,1]*covsY[i,2] + betamat[4,1]*covsY[i,3]) # 2->1
+  tpmsY[,,i] <- (gammaY/apply(gammaY, 1, sum)) 
 }
-# tpm at covar min and LMN
 tpmsY[,,1]
 # tpm at covar min
 tpmsY[,,dim(tpmsY)[3]]

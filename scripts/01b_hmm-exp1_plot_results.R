@@ -383,12 +383,15 @@ betamat <- matrix(m$mle$beta, ncol=2)
 
 for(i in 1:lengthout) { 
   gamma <- diag(nbStates)
-  gamma[!gamma] <- exp(betamat[1,] + betamat[2,]*covsYvec[i])
-  tpms[,,i] <- t(gamma/apply(gamma, 1, sum)) 
+  #gamma2 <- diag(nbStates)
+  #gamma[!gamma] <- exp(betamat[,1] + betamat[,2]*covsYvec[i])
+  gamma[2,1] <- exp(betamat[1,2] + betamat[2,2]*covsYvec[i]) # 1->2
+  gamma[1,2] <- exp(betamat[1,1] + betamat[2,1]*covsYvec[i]) # 2->1
+  tpms[,,i] <- (gamma/apply(gamma, 1, sum)) 
 }
-# tpm at covar min
+# tpm at covar min: covsYvec[1]=0.02
 tpms[,,1]
-# tpm at covar max
+# tpm at covar max: covsYvec[100]=4.51
 tpms[,,dim(tpms)[3]]
 
 #' Covariance matrix of estimates
@@ -463,6 +466,7 @@ lciYgamma[,4] <- plogis(qlogis(tpms[2,2,]) - quantSup*seYgamma22/(tpms[2,2,]-tpm
 uciYgamma[,4] <- plogis(qlogis(tpms[2,2,]) + quantSup*seYgamma22/(tpms[2,2,]-tpms[2,2,]^2))
 
 #' Check it looks ok: Plot state probs and confidence intervals for when landmarks are present
+dev.new()
 Trans <- c(3,2,1,4)
 pal <- c("firebrick", "royalblue")
 plot(NA, xlim = range(covsY$CurrFlowerDist), ylim = c(0, 1), 
