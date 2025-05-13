@@ -3,3 +3,15 @@
 .RData
 .Ruserdata
 .DS_Store
+
+allData_Aug2021.csv
+processed-data_new.csv
+processed-data.csv
+processed-stops.RData
+summary_data_new.csv
+summary_data.csv
+
+01b_hmm-exp1_plot_results_OLD.R
+03b_hmm-exp3_plot_results_OLD.R
+03c_hmm-exp3_plot_statedens_OLD.R
+04a_all_exp_bestmodel_gmax_OLD.R

@@ -52,8 +52,8 @@ library(here)
 ## -----------------------------------------------------------------------
 exp1data <- read.csv(here::here("data/processed-data_2024.csv")) %>%
   filter(Exp==1) 
-exp1data_OLD <- read.csv(here::here("data/processed-data.csv")) %>%
-  filter(Exp==1) 
+#exp1data_OLD <- read.csv(here::here("data/processed-data.csv")) %>%
+#  filter(Exp==1) 
 
 names(exp1data)
 dim(exp1data)
